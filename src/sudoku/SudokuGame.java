@@ -31,7 +31,11 @@ public class SudokuGame {
 
         while (true) {
             System.out.print("> ");
-            String cmd = in.nextLine().trim().toLowerCase();
+            String line = in.nextLine().trim();
+            if (line.isEmpty()) continue;
+
+            String[] tokens = line.split("\\s+");
+            String cmd = tokens[0].toLowerCase();
 
             switch (cmd) {
                 case "help" -> {
@@ -44,15 +48,14 @@ public class SudokuGame {
                 }
                 case "print" -> { Renderer.print(board); }
                 case "set" -> {
-                    String[] parts = in.nextLine().trim().split("\\s+");
-                    if(parts.length < 3) {
+                    if(tokens.length < 4) {
                         System.out.println("Set needs 3 parts: row, column, and value (e.g., set 1 3 5).");
                         break;
                     }
                     try {
-                        int r = Integer.parseInt(parts[0]) - 1;
-                        int c = Integer.parseInt(parts[1]) - 1;
-                        int v = Integer.parseInt(parts[2]);
+                        int r = Integer.parseInt(tokens[1]) - 1;
+                        int c = Integer.parseInt(tokens[2]) - 1;
+                        int v = Integer.parseInt(tokens[3]);
                         if(board.isValidPlacement(r, c, v)){
                             board.cell(r, c).setValue(v);
                         }else{
@@ -60,7 +63,7 @@ public class SudokuGame {
                         }
                         Renderer.print(board);
                     } catch (NumberFormatException ex) {
-                        System.out.println("Set uses intergers: set row column value (e.g., set 1 3 5)");
+                        System.out.println("Set uses integers: set row column value (e.g., set 1 3 5)");
                     }
                 }
                 case "quit" -> {
