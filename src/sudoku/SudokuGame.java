@@ -89,35 +89,38 @@ public class SudokuGame {
                     }
                 }
                 case "clear" -> {
-                if(tokens.length < 3) {
-                    System.out.println("Clear needs 2 parts: row, column (e.g., clear 1 2).");
-                    break;
-                }
-                try {
-                    int r = Integer.parseInt(tokens[1]) - 1;
-                    int c = Integer.parseInt(tokens[2]) - 1;
-                    if(!board.inBounds(r, c)){
-                        System.out.println("Row/Col must be 1-9");
+                    if(tokens.length < 3) {
+                        System.out.println("Clear needs 2 parts: row, column (e.g., clear 1 2).");
                         break;
                     }
-                    
-                    if (board.cell(r,c).isGiven()){
-                        System.out.println("That cell is a given and can't be changed.");
-                        break; 
-                    } 
-                    
-                    if (board.cell(r,c).getValue() == 0) {
-                        System.out.println("Cell already empty.");
-                        break; 
+                    try {
+                        int r = Integer.parseInt(tokens[1]) - 1;
+                        int c = Integer.parseInt(tokens[2]) - 1;
+                        if(!board.inBounds(r, c)){
+                            System.out.println("Row/Col must be 1-9");
+                            break;
+                        }
+                        
+                        if (board.cell(r,c).isGiven()){
+                            System.out.println("That cell is a given and can't be changed.");
+                            break; 
+                        } 
+                        
+                        if (board.cell(r,c).getValue() == 0) {
+                            System.out.println("Cell already empty.");
+                            break; 
+                        }
+
+                        board.cell(r,c).clearValue();;
+                        Renderer.print(board);
+
+                    } catch (NumberFormatException ex) {
+                        System.out.println("Clear uses integers: clear row column (e.g., clear 1 2)");
                     }
-
-                    board.cell(r,c).clearValue();;
-                    Renderer.print(board);
-
-                } catch (NumberFormatException ex) {
-                    System.out.println("Clear uses integers: clear row column (e.g., clear 1 2)");
                 }
-            }
+                case "check" -> {
+                    System.out.println(board.isSolved() ? "Solved!" : "Not solved.");
+                }
                 case "quit" -> {
                     System.out.println("Goodbye!");
                     in.close();
