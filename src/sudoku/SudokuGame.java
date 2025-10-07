@@ -42,6 +42,9 @@ public class SudokuGame {
                             (more commands otw)
                     """);
                 }
+                case "print" -> {
+                    Renderer.print(board);
+                }
                 case "quit" -> {
                     System.out.println("Goodbye!");
                     in.close();
