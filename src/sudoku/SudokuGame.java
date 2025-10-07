@@ -62,7 +62,9 @@ public class SudokuGame {
                             System.out.println("That cell is a given.");
                         } else if (v < 1 || v > 9) {
                             System.out.println("Value must be 1-9");
-                        } else if (board.isValidPlacement(r, c, v)) {
+                        } else if (board.cell(r,c).getValue() != 0) {
+                            System.out.println("Cell not empty. Use: Clear " + (r+1) + " " + (c+1));
+                        }else if (board.isValidPlacement(r, c, v)) {
                             board.cell(r,c).setValue(v);
                         } else {
                             System.out.println("Invalid Placement");
