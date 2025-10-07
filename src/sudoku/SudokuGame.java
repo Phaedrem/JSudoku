@@ -18,6 +18,7 @@ public class SudokuGame {
     public static void main(String[] args) {
         // 1. Create a board from the string
         Board board = Board.fromString(EASY);
+        Scanner in = new Scanner(System.in);
 
         // 2. Print a welcome message
         System.out.println("Current board:");
@@ -27,6 +28,29 @@ public class SudokuGame {
 
         // 4. Placeholder for looping input
         System.out.println("Type 'help' for commands");
+
+        while (true) {
+            System.out.print("> ");
+            String cmd = in.nextLine().trim().toLowerCase();
+
+            switch (cmd) {
+                case "help" -> {
+                    System.out.println("""
+                        Commands:
+                            help - Show this help message
+                            quit - exit the game
+                            (more commands otw)
+                    """);
+                }
+                case "quit" -> {
+                    System.out.println("Goodbye!");
+                    in.close();
+                    return;
+                }
+                case "" -> {}
+                default -> System.out.println("Unknown command. Type 'help' for accepted commands.");
+            }
+        }
 
     }
 }
