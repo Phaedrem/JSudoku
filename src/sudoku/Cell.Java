@@ -36,7 +36,8 @@ public class Cell {
         }
     }
 
-    @Override String toString(){
+    @Override
+    public String toString() {
         return (value == 0) ? "." : Integer.toString(value);
     }
 }
