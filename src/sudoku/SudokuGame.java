@@ -98,9 +98,17 @@ public class SudokuGame {
                         System.out.println("Load chooses a difficulty (e.g., load easy | load medium | load hard | load <81-char-puzzle>)");
                         break;
                     }
-                    String arg = tokens[1].toLowerCase();
 
+                    System.out.print("This will replace your current board. Continue? (y/n): ");
+                    String confirm = in.nextLine().trim().toLowerCase();
+                    if (!confirm.equals("y") && !confirm.equals("yes")){
+                        System.out.println("Load cancelled");
+                        break;
+                    }
+
+                    String arg = tokens[1].toLowerCase();
                     Board newBoard = null;
+                    
                     switch (arg) {
                         case "easy" -> newBoard = Board.fromString(EASY);
                         case "medium" -> newBoard = Board.fromString(MEDIUM);
