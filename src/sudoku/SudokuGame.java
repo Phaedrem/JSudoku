@@ -58,18 +58,32 @@ public class SudokuGame {
                         int v = Integer.parseInt(tokens[3]);
                         if(!board.inBounds(r, c)){
                             System.out.println("Row/Col must be 1-9");
-                        }else if (board.cell(r,c).isGiven()){
-                            System.out.println("That cell is a given.");
-                        } else if (v < 1 || v > 9) {
-                            System.out.println("Value must be 1-9");
-                        } else if (board.cell(r,c).getValue() != 0) {
-                            System.out.println("Cell not empty. Use: Clear " + (r+1) + " " + (c+1));
-                        }else if (board.isValidPlacement(r, c, v)) {
-                            board.cell(r,c).setValue(v);
-                        } else {
-                            System.out.println("Invalid Placement");
+                            break;
                         }
+                        
+                        if (board.cell(r,c).isGiven()){
+                            System.out.println("That cell is a given.");
+                            break; 
+                        } 
+                        
+                        if (v < 1 || v > 9) {
+                            System.out.println("Value must be 1-9");
+                            break;
+                        }
+                        
+                        if (board.cell(r,c).getValue() != 0) {
+                            System.out.println("Cell not empty. Use: Clear " + (r+1) + " " + (c+1));
+                            break; 
+                        }
+                        
+                        if (!board.isValidPlacement(r, c, v)) {
+                            System.out.println("Invalid Placement (row/column/box conflict).");
+                            break;
+                        }
+
+                        board.cell(r,c).setValue(v);
                         Renderer.print(board);
+
                     } catch (NumberFormatException ex) {
                         System.out.println("Set uses integers: set row column value (e.g., set 1 3 5)");
                     }
