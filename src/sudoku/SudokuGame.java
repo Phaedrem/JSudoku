@@ -56,9 +56,15 @@ public class SudokuGame {
                         int r = Integer.parseInt(tokens[1]) - 1;
                         int c = Integer.parseInt(tokens[2]) - 1;
                         int v = Integer.parseInt(tokens[3]);
-                        if(board.isValidPlacement(r, c, v)){
-                            board.cell(r, c).setValue(v);
-                        }else{
+                        if(!board.inBounds(r, c)){
+                            System.out.println("Row/Col must be 1-9");
+                        }else if (board.cell(r,c).isGiven()){
+                            System.out.println("That cell is a given.");
+                        } else if (v < 1 || v > 9) {
+                            System.out.println("Value must be 1-9");
+                        } else if (board.isValidPlacement(r, c, v)) {
+                            board.cell(r,c).setValue(v);
+                        } else {
                             System.out.println("Invalid Placement");
                         }
                         Renderer.print(board);
