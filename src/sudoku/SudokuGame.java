@@ -63,10 +63,46 @@ public class SudokuGame {
                 case "help" -> {
                     System.out.println("""
                         Commands:
-                            help - Show this help message
-                            quit - exit the game
-                            (more commands otw)
-                    """);
+                        help                     - show this help message
+                        print                    - reprint the current board
+                        set r c v                - place a value (1-9) at row r, col c
+                        clear r c                - clear a non-given cell at row r, col c
+                        check                    - check if the puzzle is solved
+                        load easy|medium|hard    - load a preset puzzle
+                        load <81-char-string>    - load a custom puzzle string
+                        quit                     - exit the game
+                        """);
+                }
+                case "load" -> {
+                    if(tokens.length < 2){
+                        System.out.println("Load chooses a difficulty (e.g., load easy | load medium | load hard | load <81-char-puzzle>)");
+                        break;
+                    }
+                    String arg = tokens[1].toLowerCase();
+
+                    Board newBoard = null;
+                    switch (arg) {
+                        case "easy" -> newBoard = Board.fromString(EASY);
+                        case "medium" -> newBoard = Board.fromString(MEDIUM);
+                        case "hard" -> newBoard = Board.fromString(HARD);
+                        default -> {
+                            if (arg.length() == 81){
+                                try {
+                                    newBoard = Board.fromString(arg);
+                                } catch (IllegalArgumentException iae){
+                                    System.out.println("Invalid puzzle string: " + iae.getMessage());
+                                    break;
+                                }
+                            } else {
+                                System.out.println("Load chooses a difficulty (e.g., load easy | load medium | load hard | load <81-char-puzzle>)");
+                                break;
+                            }
+                        }
+                    }
+                    if (newBoard != null){
+                        board = newBoard;
+                        Renderer.print(board);
+                    }
                 }
                 case "print" -> { Renderer.print(board); }
                 case "set" -> {
