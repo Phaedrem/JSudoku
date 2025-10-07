@@ -38,9 +38,29 @@ public class SudokuGame {
         "507000000";
 
     public static void main(String[] args) {
-        // 1. Create a board from the string
-        Board board = Board.fromString(EASY);
         Scanner in = new Scanner(System.in);
+        System.out.print("Welcome to Sudoku! Choose a difficulty (easy/medium/hard): ");
+        String choice = in.nextLine().trim();
+
+        // 1. Create a board from the string
+        Board board;
+        if (choice.isEmpty() || choice.equalsIgnoreCase("easy")){
+            board = Board.fromString(EASY);
+        } else if (choice.equalsIgnoreCase("medium")) {
+            board = Board.fromString(MEDIUM);
+        }else if (choice.equalsIgnoreCase("hard")) {
+            board = Board.fromString(HARD);
+        }else if (choice.length() == 81){
+            try {
+                board = Board.fromString(choice);
+            } catch (IllegalArgumentException iae) {
+                System.out.println("Invalid puzzle string. Defaulting to EASY.");
+                board = Board.fromString(EASY);
+            }
+        }else {
+            System.out.println("Unrecognized choice. Using EASY.");
+            board = Board.fromString(EASY);
+        }
 
         // 2. Print a welcome message
         System.out.println("Current board:");
