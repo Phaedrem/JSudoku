@@ -62,7 +62,12 @@ public class SudokuGame {
             board = Board.fromString(EASY);
         }
 
+        boolean solvable = true;
         Board solved = Solver.solvedBoard(board);
+        if(solved == null){
+            System.out.println("Warning: puzzle appears unsolvable. Disabling unqiue solution checks");
+            solvable = false;
+        }
 
         // 2. Print a welcome message
         System.out.println("Current board:");
@@ -177,7 +182,7 @@ public class SudokuGame {
                             break;
                         }
 
-                        if (v != solved.cell(r, c).getValue()){
+                        if (solvable && v != solved.cell(r, c).getValue()){
                             System.out.println("This value doesn't match the unique solution");
                             break;
                         }
