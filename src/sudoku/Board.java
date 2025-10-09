@@ -57,7 +57,7 @@ public class Board {
         return success; 
     }
 
-    public boolean tryClear(int r, int c){
+    public boolean tryClear(int r, int c){ // Tries to clear a specific cell
         boolean success = false;
         if(inBounds(r, c)){
             var cell = grid[r][c];
