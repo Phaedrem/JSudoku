@@ -37,6 +37,29 @@ public class SudokuGame {
         "034059000" +
         "507000000";
 
+    private static final String MULTIPLE =
+        "100000000" +
+        "000000000" +
+        "000000000" +
+        "000000000" +
+        "000000000" +
+        "000000000" +
+        "000000000" +
+        "000000000" +
+        "000000000";
+
+    private static final String UNSOLVABLE =
+        "530070000" +
+        "600195000" +
+        "098000060" +
+        "800060003" +
+        "400803001" +
+        "700020006" +
+        "060000280" +
+        "000419005" +
+        "000080071";
+
+
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         System.out.print("Welcome to Sudoku! Choose a difficulty (easy/medium/hard): ");
@@ -50,6 +73,10 @@ public class SudokuGame {
             board = Board.fromString(MEDIUM);
         }else if (choice.equalsIgnoreCase("hard")) {
             board = Board.fromString(HARD);
+        }else if (choice.equalsIgnoreCase("multiple")) {
+            board = Board.fromString(MULTIPLE);
+        }else if (choice.equalsIgnoreCase("unsolvable")) {
+            board = Board.fromString(UNSOLVABLE);
         }else if (choice.length() == 81){
             try {
                 board = Board.fromString(choice);
@@ -62,11 +89,14 @@ public class SudokuGame {
             board = Board.fromString(EASY);
         }
 
+        boolean isUnique = Solver.countSolutions(board, 2) == 1;
         boolean solvable = true;
         Board solved = Solver.solvedBoard(board);
         if(solved == null){
             System.out.println("Warning: puzzle appears unsolvable. Disabling unqiue solution checks");
             solvable = false;
+        }else if (!isUnique){
+            System.out.println("Warning: puzzle appears to have multiple solutions. Disabling unqiue solution checks");
         }
 
         // 2. Print a welcome message
@@ -182,7 +212,7 @@ public class SudokuGame {
                             break;
                         }
 
-                        if (solvable && v != solved.cell(r, c).getValue()){
+                        if (solvable && isUnique && v != solved.cell(r, c).getValue()){
                             System.out.println("This value doesn't match the unique solution");
                             break;
                         }
