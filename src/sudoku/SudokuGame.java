@@ -49,15 +49,15 @@ public class SudokuGame {
         "000000000";
 
     private static final String UNSOLVABLE =
-        "530070000" +
-        "600195000" +
-        "098000060" +
-        "800060003" +
-        "400803001" +
-        "700020006" +
-        "060000280" +
-        "000419005" +
-        "000080071";
+        "550000000" +
+        "000000000" +
+        "000000000" +
+        "000000000" +
+        "000000000" +
+        "000000000" +
+        "000000000" +
+        "000000000" +
+        "000000000";
 
 
     public static void main(String[] args) {
@@ -89,13 +89,11 @@ public class SudokuGame {
             board = Board.fromString(EASY);
         }
 
-        boolean isUnique = Solver.countSolutions(board, 2) == 1;
-        boolean solvable = true;
-        Board solved = Solver.solvedBoard(board);
-        if(solved == null){
+        Solver.solveBoard(board);
+
+        if(Solver.getNumSolutions() == 0){
             System.out.println("Warning: puzzle appears unsolvable. Disabling unqiue solution checks");
-            solvable = false;
-        }else if (!isUnique){
+        }else if (Solver.getNumSolutions() > 1){
             System.out.println("Warning: puzzle appears to have multiple solutions. Disabling unqiue solution checks");
         }
 
@@ -166,6 +164,7 @@ public class SudokuGame {
                     }
                     if (newBoard != null){
                         board = newBoard;
+                        Solver.solveBoard(board);
                         Renderer.print(board);
                     }
                 }
@@ -212,7 +211,7 @@ public class SudokuGame {
                             break;
                         }
 
-                        if (solvable && isUnique && v != solved.cell(r, c).getValue()){
+                        if (Solver.getNumSolutions() == 1 && v != Solver.solvedValueAt(r, c)){
                             System.out.println("This value doesn't match the unique solution");
                             break;
                         }
