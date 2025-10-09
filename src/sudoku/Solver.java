@@ -5,7 +5,7 @@ import util.BoardUtils;
 public class Solver {
 
     /* Global(s) */
-    private static final int SEARCH_LIMIT = 100000;
+    private static final int SEARCH_LIMIT = 1000000;
     private static final int SOLUTION_LIMIT = 2;
     
     /* Variables */
