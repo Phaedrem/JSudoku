@@ -75,7 +75,7 @@ public class SudokuGame {
             board = Board.fromString(HARD);
         }else if (choice.equalsIgnoreCase("multiple")) {
             board = Board.fromString(MULTIPLE);
-        }else if (choice.equalsIgnoreCase("unsolvable")) {
+        }else if (choice.equalsIgnoreCase("impossible")) {
             board = Board.fromString(UNSOLVABLE);
         }else if (choice.length() == 81){
             try {
@@ -148,6 +148,8 @@ public class SudokuGame {
                         case "easy" -> newBoard = Board.fromString(EASY);
                         case "medium" -> newBoard = Board.fromString(MEDIUM);
                         case "hard" -> newBoard = Board.fromString(HARD);
+                        case "multiple" -> newBoard = Board.fromString(MULTIPLE);
+                        case "impossible" -> newBoard = Board.fromString(UNSOLVABLE);
                         default -> {
                             if (arg.length() == 81){
                                 try {
