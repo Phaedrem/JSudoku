@@ -12,7 +12,6 @@ public class Solver {
     private static int numSolutions = 0;
     private static int searchCount = 0;
     private static boolean isSolvable = false;
-    private static boolean hasMultiple = false;
     private static Board solvedBoard = null;
 
     /* Private Methods */
@@ -78,7 +77,6 @@ public class Solver {
         int count = countRec(copy, limit);
         numSolutions = count;
         isSolvable = (count > 0);
-        hasMultiple = (count >= 2);
         return count;
     }
 
@@ -112,9 +110,6 @@ public class Solver {
     /* Getter methods */
     public static boolean isSolvable(){
         return isSolvable;
-    }
-    public static boolean hasMultipleSolutions(){
-        return hasMultiple;
     }
     public static int getNumSolutions(){
         return numSolutions;
