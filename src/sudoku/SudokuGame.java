@@ -133,12 +133,12 @@ public class SudokuGame {
                     }
                 }
                 case "print" -> { Renderer.print(board); }
-                case "next" -> {
-                    int[] pos = Solver.findEmpty(board);
-                    if (pos == null){
-                        System.out.println("No empty cells found");
+                case "solve" -> {
+                    if(Solver.solve(board)){
+                        System.out.println("Sudoku Solved!");
+                        Renderer.print(board);
                     }else {
-                        System.out.printf("Next empty cell is : (%d, %d)\n", pos[0] + 1, pos[1] +1);
+                        System.out.println("No solution found");
                     }
                 }
                 case "set" -> {
