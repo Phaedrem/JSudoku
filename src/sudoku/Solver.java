@@ -7,11 +7,9 @@ public class Solver {
     private static int numSolutions = 0;
     private static int searchCount = 0;
     private static final int SEARCH_LIMIT = 10000;
-
-    public static boolean solve(Board board){
-        searchCount = 0;
-        return solveRec(board);
-    }
+    private static boolean isSolvable = false;
+    private static boolean hasMultiple = false;
+    private static Board solvedBoard = null;
 
     private static boolean solveRec(Board board) {
         searchCount++;
@@ -47,40 +45,74 @@ public class Solver {
         return null;
     }
 
-    public static Board solvedBoard (Board orignal){
-        Board copy = BoardUtils.copy(orignal);
-        if(solve(copy)){
-            return copy;
-        }else {
-            return null;
-        }
-    }
-
     private static int countRec(Board b, int limit){
         searchCount++;
-        if(searchCount > SEARCH_LIMIT) return 0;
+        if (searchCount > SEARCH_LIMIT) return 0;
         int[] pos = findEmpty(b);
-        if (pos == null) return 1;
-        int r = pos[0];
-        int c = pos[1];
-        numSolutions = 0;
+        if (pos == null) return 1; // one solution found
+        int r = pos[0], c = pos[1];
+        int solutions = 0;
         for (int v = 1; v <= 9; v++){
             if (b.isValidPlacement(r, c, v)){
-                b.cell(r,c).setValue(v);
-                numSolutions += countRec(b, limit - numSolutions);
-                if (numSolutions >= limit) {
+                b.cell(r, c).setValue(v);
+                solutions += countRec(b, limit - solutions);
+                if (solutions >= limit){
                     b.cell(r, c).setValue(0);
-                    return numSolutions;
-                }b.cell(r, c).setValue(0);
+                    return solutions; // short-circuit
+                }
+                b.cell(r, c).setValue(0);
             }
         }
-        return numSolutions;
+        return solutions;
     }
-
-    public static int countSolutions(Board original, int limit){
+    
+    private static int countSolutions(Board original, int limit){
         if (limit < 1) limit = 1;
         searchCount = 0;
         Board copy = BoardUtils.copy(original);
-        return countRec(copy, limit);
+        int count = countRec(copy, limit);
+        numSolutions = count;
+        isSolvable = (count > 0);
+        hasMultiple = (count >= 2);
+        return count;
+    }
+
+    public static int solvedValueAt(int r, int c){
+        if (solvedBoard == null) throw new IllegalStateException("No solved board cached");
+        return solvedBoard.cell(r, c).getValue();
+    }
+
+
+    public static boolean solve(Board board){
+        searchCount = 0;
+        return solveRec(board);
+    }
+
+    public static void solveBoard(Board original){
+        int count = countSolutions(original, 2);
+        if (count == 0){
+            solvedBoard = null;
+        }
+        Board copy = BoardUtils.copy(original);
+        boolean solved = solve(copy);
+        if (solved){
+            solvedBoard = BoardUtils.copy(copy);
+        } else {
+            solvedBoard = null;
+            isSolvable = false;
+        }
+    }
+
+    public static boolean isSolvable(){
+        return isSolvable;
+    }
+    public static boolean hasMultipleSolutions(){
+        return hasMultiple;
+    }
+    public static int getNumSolutions(){
+        return numSolutions;
+    }
+    public static Board getSolvedBoardCopy(){
+        return solvedBoard == null ? null : BoardUtils.copy(solvedBoard);
     }
 }
