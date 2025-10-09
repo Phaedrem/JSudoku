@@ -6,7 +6,7 @@ public class Solver {
 
     private static int numSolutions = 0;
     private static int searchCount = 0;
-    private static final int SEARCH_LIMIT = 10000;
+    private static final int SEARCH_LIMIT = 100000;
     private static boolean isSolvable = false;
     private static boolean hasMultiple = false;
     private static Board solvedBoard = null;
