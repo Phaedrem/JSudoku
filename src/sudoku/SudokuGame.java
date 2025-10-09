@@ -62,6 +62,8 @@ public class SudokuGame {
             board = Board.fromString(EASY);
         }
 
+        Board solved = Solver.solvedBoard(board);
+
         // 2. Print a welcome message
         System.out.println("Current board:");
 
@@ -172,6 +174,11 @@ public class SudokuGame {
                         
                         if (!board.isValidPlacement(r, c, v)) {
                             System.out.println("Invalid Placement (row/column/box conflict).");
+                            break;
+                        }
+
+                        if (v != solved.cell(r, c).getValue()){
+                            System.out.println("This value doesn't match the unique solution");
                             break;
                         }
 
