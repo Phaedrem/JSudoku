@@ -4,9 +4,20 @@ import util.BoardUtils;
 
 public class Solver {
 
-    int numSolutions = 0;
+    private static int numSolutions = 0;
+    private static int searchCount = 0;
+    private static final int SEARCH_LIMIT = 10000;
 
     public static boolean solve(Board board){
+        searchCount = 0;
+        return solveRec(board);
+    }
+
+    private static boolean solveRec(Board board) {
+        searchCount++;
+        if (searchCount > SEARCH_LIMIT){
+            return false;
+        }
         int[] pos = findEmpty(board);
         if(pos == null){
             return true;
@@ -16,7 +27,7 @@ public class Solver {
         for (int v = 1; v <= 9; v++){
             if (board.isValidPlacement(r, c, v)){
                 board.cell(r, c).setValue(v);
-                if (solve(board)){
+                if (solveRec(board)){
                     return true;
                 }
                 board.cell(r, c).setValue(0);
@@ -46,26 +57,29 @@ public class Solver {
     }
 
     private static int countRec(Board b, int limit){
+        searchCount++;
+        if(searchCount > SEARCH_LIMIT) return 0;
         int[] pos = findEmpty(b);
         if (pos == null) return 1;
         int r = pos[0];
         int c = pos[1];
-        int total = 0;
+        numSolutions = 0;
         for (int v = 1; v <= 9; v++){
             if (b.isValidPlacement(r, c, v)){
                 b.cell(r,c).setValue(v);
-                total += countSolutions(b, limit - total);
-                if (total >= limit) {
+                numSolutions += countRec(b, limit - numSolutions);
+                if (numSolutions >= limit) {
                     b.cell(r, c).setValue(0);
-                    return total;
+                    return numSolutions;
                 }b.cell(r, c).setValue(0);
             }
         }
-        return total;
+        return numSolutions;
     }
 
     public static int countSolutions(Board original, int limit){
         if (limit < 1) limit = 1;
+        searchCount = 0;
         Board copy = BoardUtils.copy(original);
         return countRec(copy, limit);
     }
