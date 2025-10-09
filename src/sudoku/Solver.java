@@ -82,7 +82,7 @@ public class Solver {
 
     /* Public Methods */
     public static int solvedValueAt(int r, int c){ // Returns value in a specific cell of the solution board.
-        if (solvedBoard == null) throw new IllegalStateException("No solved board cached");
+        if (solvedBoard == null || numSolutions > 1) throw new IllegalStateException("No solved board cached");
         return solvedBoard.cell(r, c).getValue();
     }
 
