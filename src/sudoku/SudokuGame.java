@@ -133,6 +133,14 @@ public class SudokuGame {
                     }
                 }
                 case "print" -> { Renderer.print(board); }
+                case "next" -> {
+                    int[] pos = Solver.findEmpty(board);
+                    if (pos == null){
+                        System.out.println("No empty cells found");
+                    }else {
+                        System.out.printf("Next empty cell is : (%d, %d)\n", pos[0] + 1, pos[1] +1);
+                    }
+                }
                 case "set" -> {
                     if(tokens.length < 4) {
                         System.out.println("Set needs 3 parts: row, column, and value (e.g., set 1 3 5).");
