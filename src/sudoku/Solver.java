@@ -4,14 +4,19 @@ import util.BoardUtils;
 
 public class Solver {
 
+    /* Global(s) */
+    private static final int SEARCH_LIMIT = 100000;
+    private static final int SOLUTION_LIMIT = 2;
+    
+    /* Variables */
     private static int numSolutions = 0;
     private static int searchCount = 0;
-    private static final int SEARCH_LIMIT = 100000;
     private static boolean isSolvable = false;
     private static boolean hasMultiple = false;
     private static Board solvedBoard = null;
 
-    private static boolean solveRec(Board board) {
+    /* Private Methods */
+    private static boolean solveRec(Board board) { // Helper to the solve Method so that searchCount can be reset to 0 on call and still allow recursion.
         searchCount++;
         if (searchCount > SEARCH_LIMIT){
             return false;
@@ -34,7 +39,7 @@ public class Solver {
         return false;
     }
     
-    private static int[] findEmpty(Board board){
+    private static int[] findEmpty(Board board){ // Searches for empty cells and returns it's location. 
         for (int r = 0; r < 9; r++){
             for (int c = 0; c < 9; c++){
                 if(board.cell(r, c).getValue() == 0){
@@ -45,7 +50,7 @@ public class Solver {
         return null;
     }
 
-    private static int countRec(Board b, int limit){
+    private static int countRec(Board b, int limit){ // Helper method for countSolutions so that searchCount can be reset to 0 on call and still allow recursion.
         searchCount++;
         if (searchCount > SEARCH_LIMIT) return 0;
         int[] pos = findEmpty(b);
@@ -66,7 +71,7 @@ public class Solver {
         return solutions;
     }
     
-    private static int countSolutions(Board original, int limit){
+    private static int countSolutions(Board original, int limit){ // Counts the number of solutions up to a limit.
         if (limit < 1) limit = 1;
         searchCount = 0;
         Board copy = BoardUtils.copy(original);
@@ -77,19 +82,20 @@ public class Solver {
         return count;
     }
 
-    public static int solvedValueAt(int r, int c){
+    /* Public Methods */
+    public static int solvedValueAt(int r, int c){ // Returns value in a specific cell of the solution board.
         if (solvedBoard == null) throw new IllegalStateException("No solved board cached");
         return solvedBoard.cell(r, c).getValue();
     }
 
 
-    public static boolean solve(Board board){
+    public static boolean solve(Board board){ // Solves the board if possible
         searchCount = 0;
         return solveRec(board);
     }
 
-    public static void solveBoard(Board original){
-        int count = countSolutions(original, 2);
+    public static void solveBoard(Board original){ // Calls countSolutions to check if solvable, and if it has multiple solutions, and stores solution in local Board.
+        int count = countSolutions(original, SOLUTION_LIMIT);
         if (count == 0){
             solvedBoard = null;
         }
@@ -103,6 +109,7 @@ public class Solver {
         }
     }
 
+    /* Getter methods */
     public static boolean isSolvable(){
         return isSolvable;
     }
