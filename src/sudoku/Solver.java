@@ -34,4 +34,19 @@ public class Solver {
         return null;
     }
 
+    public static Board solvedBoard (Board orignal){
+        int[][] grid = new int[9][9];
+        for (int r = 0; r < 9; r++){
+            for (int c = 0; c < 9; c++){
+                grid[r][c] = orignal.cell(r, c).getValue();
+            }
+        }
+        Board copy = new Board(grid);
+        if(solve(copy)){
+            return copy;
+        }else {
+            return null;
+        }
+    }
+
 }
