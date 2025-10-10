@@ -9,14 +9,10 @@
   <body>
     <script>
       (async () => {
-        console.log("[CheerpJ] init (single-thread)...");
-        await cheerpjInit({ enableThreads: false });   // force non-threaded mode (Pages can't set special headers)
-        console.log("[CheerpJ] create display...");
-        cheerpjCreateDisplay(900, 700);                // terminal for stdin/stdout
-        console.log("[CheerpJ] run main...");
-        await cheerpjRunMain("sudoku.SudokuGame", "/app/sudoku.jar"); // bypass manifest
-        console.log("[CheerpJ] started.");
+        await cheerpjInit({ enableThreads: false });
+        cheerpjCreateDisplay(900, 700);
+        await cheerpjRunMain("sudoku.SudokuGame", ["/app/sudoku.jar"]);
       })();
-    </script>
+</script>
   </body>
 </html>
