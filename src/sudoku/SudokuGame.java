@@ -21,7 +21,7 @@ public class SudokuGame {
             try {
                 board = Board.fromString(seed);
             } catch (IllegalArgumentException iae) {
-                System.out.println("Invalid puzzle string.");
+                System.out.println("Invalid puzzle string. Defaulting to EASY.");
                 board = Board.fromString(Seeds.EASY);
             }
         }
@@ -87,7 +87,7 @@ public class SudokuGame {
                         try {
                             board = Board.fromString(seed);
                         } catch (IllegalArgumentException iae) {
-                            System.out.println("Invalid puzzle string.");
+                            System.out.println("Invalid puzzle string. Defaulting to EASY.");
                             board = Board.fromString(Seeds.EASY);
                         }
                     }
