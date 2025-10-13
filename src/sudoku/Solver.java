@@ -26,7 +26,7 @@ public class Solver {
         }
         int r = pos[0];
         int c = pos[1];
-        for (int v = 1; v <= 9; v++){
+        for (int v = 1; v <= Board.SIZE; v++){
             if (board.isValidPlacement(r, c, v)){
                 board.cell(r, c).setValue(v);
                 if (solveRec(board)){
@@ -39,8 +39,8 @@ public class Solver {
     }
     
     private static int[] findEmpty(Board board){ // Searches for empty cells and returns it's location. 
-        for (int r = 0; r < 9; r++){
-            for (int c = 0; c < 9; c++){
+        for (int r = 0; r < Board.SIZE; r++){
+            for (int c = 0; c < Board.SIZE; c++){
                 if(board.cell(r, c).getValue() == 0){
                     return new int[]{r,c};
                 }
@@ -56,7 +56,7 @@ public class Solver {
         if (pos == null) return 1; // one solution found
         int r = pos[0], c = pos[1];
         int solutions = 0;
-        for (int v = 1; v <= 9; v++){
+        for (int v = 1; v <= Board.SIZE; v++){
             if (b.isValidPlacement(r, c, v)){
                 b.cell(r, c).setValue(v);
                 solutions += countRec(b, limit - solutions);
