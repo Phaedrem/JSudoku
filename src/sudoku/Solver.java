@@ -92,18 +92,13 @@ public class Solver {
         return solveRec(board);
     }
 
-    public static void solveBoard(Board original){ // Calls countSolutions to check if solvable, and if it has multiple solutions, and stores solution in local Board.
-        int count = countSolutions(original, SOLUTION_LIMIT);
-        if (count == 0){
-            solvedBoard = null;
-        }
-        Board copy = BoardUtils.copy(original);
-        boolean solved = solve(copy);
-        if (solved){
-            solvedBoard = BoardUtils.copy(copy);
+    public static void solveBoard(Board original){
+        countSolutions(original, SOLUTION_LIMIT);
+        if (numSolutions == 1){
+            solvedBoard = BoardUtils.copy(original);
+            solve(solvedBoard);
         } else {
             solvedBoard = null;
-            isSolvable = false;
         }
     }
 
