@@ -8,15 +8,21 @@ public class SudokuGame {
         System.out.print("Welcome to Sudoku! Choose a difficulty (easy/medium/hard): ");
         String choice = in.nextLine().trim();
         String seed = Seeds.BY_NAME.get(choice.toLowerCase());
-
         Board board;
+
         if (seed == null){
-            try {
-                board = Board.fromString(choice);
-            } catch (IllegalArgumentException iae) {
+            if (choice.length() != 81){
                 System.out.println("Invalid puzzle string. Defaulting to EASY.");
                 board = Board.fromString(Seeds.EASY);
+            } else {
+                try { 
+                    board = Board.fromString(choice);
+                } catch (IllegalArgumentException iae) {
+                    System.out.println("Invalid puzzle string. Defaulting to EASY.");
+                    board = Board.fromString(Seeds.EASY);
+                }
             }
+            
         } else {
             try {
                 board = Board.fromString(seed);
@@ -77,11 +83,16 @@ public class SudokuGame {
                     seed = Seeds.BY_NAME.get(choice.toLowerCase());
                     
                     if (seed == null){
-                        try {
-                            board = Board.fromString(choice);
-                        } catch (IllegalArgumentException iae) {
+                        if (choice.length() != 81){
                             System.out.println("Invalid puzzle string. Defaulting to EASY.");
                             board = Board.fromString(Seeds.EASY);
+                        } else {
+                            try { 
+                                board = Board.fromString(choice);
+                            } catch (IllegalArgumentException iae) {
+                                System.out.println("Invalid puzzle string. Defaulting to EASY.");
+                                board = Board.fromString(Seeds.EASY);
+                            }
                         }
                     } else {
                         try {
@@ -91,6 +102,7 @@ public class SudokuGame {
                             board = Board.fromString(Seeds.EASY);
                         }
                     }
+
                     if (board != null){
                         Solver.solveBoard(board);
                         if(Solver.getNumSolutions() == 0){
