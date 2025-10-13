@@ -1,11 +1,13 @@
 package sudoku;
 
 public class Board {
-    private final Cell[][] grid = new Cell[9][9];
+    public static final int SIZE = 9;
+    private final Cell[][] grid = new Cell[SIZE][SIZE];
+    
 
     public Board(int[][] start) { // Initalize the board
-        for (int r = 0; r < 9; r++) {
-            for (int c = 0; c < 9; c++) {
+        for (int r = 0; r < SIZE; r++) {
+            for (int c = 0; c < SIZE; c++) {
                 int v = start[r][c];
                 grid[r][c] = new Cell(v, v != 0); // given if nonzero
             }
@@ -15,13 +17,13 @@ public class Board {
     public Cell cell(int r, int c) { return grid[r][c]; } // Getter method to pull cell without affecting the original grid
 
     public boolean inBounds(int r, int c) {  // Verify bounds intergrity
-        return r >= 0 && r < 9 && c >= 0 && c < 9;
+        return r >= 0 && r < SIZE && c >= 0 && c < SIZE;
     }
 
     public boolean isValidPlacement(int r, int c, int v) { // Check if provided addition is valid
         boolean valid = true;
-        if(!inBounds(r, c) || v < 1 || v > 9) { valid = false; } 
-        for(int i = 0; i < 9; i++){ // Checks if provided number is already in the row or column it's attemping to be added to
+        if(!inBounds(r, c) || v < 1 || v > SIZE) { valid = false; } 
+        for(int i = 0; i < SIZE; i++){ // Checks if provided number is already in the row or column it's attemping to be added to
             if (grid[r][i].getValue() == v) {
                 valid = false;
                 break;
@@ -71,8 +73,8 @@ public class Board {
 
     public boolean isSolved() { // Check if board is solved
         boolean solved = true;
-        for (int r = 0; r < 9; r++){
-            for (int c = 0; c < 9; c++){
+        for (int r = 0; r < SIZE; r++){
+            for (int c = 0; c < SIZE; c++){
                 int v = grid[r][c].getValue();
                 if (v == 0){
                     solved = false;
@@ -91,11 +93,11 @@ public class Board {
     }
 
     public static Board fromString(String s){ // Testing method that accepts a string and sets that string as the intial values for the puzzle. 
-        if(s.length() != 81) throw new IllegalArgumentException("Puzzle string must be 81 chars"); 
-        int[][] arr = new int[9][9];
-        for (int i = 0; i < 81; i++){
+        if(s.length() != (SIZE * SIZE)) throw new IllegalArgumentException("Puzzle string must be equal to the size of the board (typically 9x9)"); 
+        int[][] arr = new int[SIZE][SIZE];
+        for (int i = 0; i < (SIZE * SIZE); i++){
             char ch = s.charAt(i);
-            arr[i/9][i % 9] = (ch == '0' || ch == '.') ? 0 : (ch - '0');
+            arr[i/SIZE][i % SIZE] = (ch == '0' || ch == '.') ? 0 : (ch - '0');
         }
         return new Board(arr);
     }
