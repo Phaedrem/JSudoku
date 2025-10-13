@@ -3,90 +3,27 @@ package sudoku;
 import java.util.Scanner;
 
 public class SudokuGame {
-
-    private static final String EASY =
-        "003020600" +
-        "900305001" +
-        "001806400" +
-        "008102900" +
-        "700000008" +
-        "006708200" +
-        "002609500" +
-        "800203009" +
-        "005010300";
-
-    private static final String MEDIUM =
-        "200080300" +
-        "060070084" +
-        "030500209" +
-        "000105408" +
-        "000000000" +
-        "402706000" +
-        "301007040" +
-        "720040060" +
-        "004010003";
-
-    private static final String HARD =
-        "000000907" +
-        "000420180" +
-        "000705026" +
-        "100904000" +
-        "050000040" +
-        "000507009" +
-        "920108000" +
-        "034059000" +
-        "507000000";
-
-    private static final String MULTIPLE =
-        "100000000" +
-        "000000000" +
-        "000000000" +
-        "000000000" +
-        "000000000" +
-        "000000000" +
-        "000000000" +
-        "000000000" +
-        "000000000";
-
-    private static final String UNSOLVABLE =
-        "550000000" +
-        "000000000" +
-        "000000000" +
-        "000000000" +
-        "000000000" +
-        "000000000" +
-        "000000000" +
-        "000000000" +
-        "000000000";
-
-
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         System.out.print("Welcome to Sudoku! Choose a difficulty (easy/medium/hard): ");
         String choice = in.nextLine().trim();
+        String seed = Seeds.BY_NAME.get(choice.toLowerCase());
 
-        // 1. Create a board from the string
         Board board;
-        if (choice.isEmpty() || choice.equalsIgnoreCase("easy")){
-            board = Board.fromString(EASY);
-        } else if (choice.equalsIgnoreCase("medium")) {
-            board = Board.fromString(MEDIUM);
-        }else if (choice.equalsIgnoreCase("hard")) {
-            board = Board.fromString(HARD);
-        }else if (choice.equalsIgnoreCase("multiple")) {
-            board = Board.fromString(MULTIPLE);
-        }else if (choice.equalsIgnoreCase("impossible")) {
-            board = Board.fromString(UNSOLVABLE);
-        }else if (choice.length() == 81){
+        if (seed == null){
             try {
                 board = Board.fromString(choice);
             } catch (IllegalArgumentException iae) {
                 System.out.println("Invalid puzzle string. Defaulting to EASY.");
-                board = Board.fromString(EASY);
+                board = Board.fromString(Seeds.EASY);
             }
-        }else {
-            System.out.println("Unrecognized choice. Using EASY.");
-            board = Board.fromString(EASY);
+        } else {
+            try {
+                board = Board.fromString(seed);
+            } catch (IllegalArgumentException iae) {
+                System.out.println("Invalid puzzle string.");
+                board = Board.fromString(Seeds.EASY);
+            }
         }
 
         Solver.solveBoard(board);
@@ -97,13 +34,8 @@ public class SudokuGame {
             System.out.println("Warning: puzzle appears to have multiple solutions. Disabling unique solution checks");
         }
 
-        // 2. Print a welcome message
         System.out.println("Current board:");
-
-        // 3. Render the board to terminal
         Renderer.print(board);
-
-        // 4. Placeholder for looping input
         System.out.println("Type 'help' for commands");
 
         while (true) {
@@ -141,32 +73,32 @@ public class SudokuGame {
                         break;
                     }
 
-                    String arg = tokens[1].toLowerCase();
-                    Board newBoard = null;
+                    choice = tokens[1].toLowerCase();
+                    seed = Seeds.BY_NAME.get(choice.toLowerCase());
                     
-                    switch (arg) {
-                        case "easy" -> newBoard = Board.fromString(EASY);
-                        case "medium" -> newBoard = Board.fromString(MEDIUM);
-                        case "hard" -> newBoard = Board.fromString(HARD);
-                        case "multiple" -> newBoard = Board.fromString(MULTIPLE);
-                        case "impossible" -> newBoard = Board.fromString(UNSOLVABLE);
-                        default -> {
-                            if (arg.length() == 81){
-                                try {
-                                    newBoard = Board.fromString(arg);
-                                } catch (IllegalArgumentException iae){
-                                    System.out.println("Invalid puzzle string: " + iae.getMessage());
-                                    break;
-                                }
-                            } else {
-                                System.out.println("Load chooses a difficulty (e.g., load easy | load medium | load hard | load <81-char-puzzle>)");
-                                break;
-                            }
+                    if (seed == null){
+                        try {
+                            board = Board.fromString(choice);
+                        } catch (IllegalArgumentException iae) {
+                            System.out.println("Invalid puzzle string. Defaulting to EASY.");
+                            board = Board.fromString(Seeds.EASY);
+                        }
+                    } else {
+                        try {
+                            board = Board.fromString(seed);
+                        } catch (IllegalArgumentException iae) {
+                            System.out.println("Invalid puzzle string.");
+                            board = Board.fromString(Seeds.EASY);
                         }
                     }
-                    if (newBoard != null){
-                        board = newBoard;
+                    if (board != null){
                         Solver.solveBoard(board);
+                        if(Solver.getNumSolutions() == 0){
+                            System.out.println("Warning: puzzle appears unsolvable. Disabling unique solution checks");
+                        }else if (Solver.getNumSolutions() > 1){
+                            System.out.println("Warning: puzzle appears to have multiple solutions. Disabling unique solution checks");
+                        }
+                        System.out.println("Current board:");
                         Renderer.print(board);
                     }
                 }
