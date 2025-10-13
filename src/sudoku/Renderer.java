@@ -1,7 +1,16 @@
 package sudoku;
 
+/**
+ * Console renderer for printing a Sudoku board.
+ * Produces a simple ASCII representation of the current grid.
+ */
 public class Renderer {
     
+    /**
+     * Print the given board to standard output.
+     *
+     * @param b the board to render
+     */
     public static void print(Board b){
         String sep = " +-------+-------+-------+";
         System.out.println("   1 2 3   4 5 6   7 8 9");
