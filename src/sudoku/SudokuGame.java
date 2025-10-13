@@ -92,9 +92,9 @@ public class SudokuGame {
         Solver.solveBoard(board);
 
         if(Solver.getNumSolutions() == 0){
-            System.out.println("Warning: puzzle appears unsolvable. Disabling unqiue solution checks");
+            System.out.println("Warning: puzzle appears unsolvable. Disabling unique solution checks");
         }else if (Solver.getNumSolutions() > 1){
-            System.out.println("Warning: puzzle appears to have multiple solutions. Disabling unqiue solution checks");
+            System.out.println("Warning: puzzle appears to have multiple solutions. Disabling unique solution checks");
         }
 
         // 2. Print a welcome message
