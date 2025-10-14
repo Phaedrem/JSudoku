@@ -79,22 +79,26 @@ public class Board {
     public boolean isValidPlacement(int r, int c, int v) { // Check if provided addition is valid
         boolean valid = true;
         if(!inBounds(r, c) || v < 1 || v > SIZE) { valid = false; } 
-        for(int i = 0; i < SIZE; i++){ // Checks if provided number is already in the row or column it's attemping to be added to
-            if (grid[r][i].getValue() == v) {
-                valid = false;
-                break;
-            }
-            if (grid[i][c].getValue() == v) {
-                valid = false;
-                break;
-            }
-        }
-        int br = (r / 3) * 3, bc = (c/3) * 3;
-        for (int rr = br; rr < br + 3; rr++){ // Check the 3x3 box for existing value
-            for (int cc = bc; cc < bc + 3; cc++){
-                if (grid[rr][cc].getValue() == v){
+        if(valid) {
+            for(int i = 0; i < SIZE; i++){ // Checks if provided number is already in the row or column it's attemping to be added to
+                if (grid[r][i].getValue() == v) {
                     valid = false;
                     break;
+                }
+                if (grid[i][c].getValue() == v) {
+                    valid = false;
+                    break;
+                }
+            }
+        }
+        if(valid){
+            int br = (r / 3) * 3, bc = (c/3) * 3;
+            for (int rr = br; rr < br + 3; rr++){ // Check the 3x3 box for existing value
+                for (int cc = bc; cc < bc + 3; cc++){
+                    if (grid[rr][cc].getValue() == v){
+                        valid = false;
+                        break;
+                    }
                 }
             }
         }
