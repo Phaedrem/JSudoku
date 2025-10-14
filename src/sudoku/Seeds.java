@@ -2,6 +2,19 @@ package sudoku;
 
 import java.util.Map;
 
+/**
+ * Built-in Sudoku seed strings for quick loading in the CLI.
+ * <p>Each seed is an 81-character row-major string where digits {@code 1..9}
+ * are givens and {@code '0'} or {@code '.'} represent empty cells.</p>
+ *
+ * <p>Usage:</p>
+ * <pre>{@code
+ * String s = Seeds.BY_NAME.get("easy");
+ * Board b = Board.fromString(s);
+ * }</pre>
+ *
+ * @see sudoku.Board#fromString(String)
+ */
 public final class Seeds {
     private Seeds() {}
 

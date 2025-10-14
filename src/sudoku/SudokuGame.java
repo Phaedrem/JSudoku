@@ -2,7 +2,21 @@ package sudoku;
 
 import java.util.Scanner;
 
+/**
+ * Command-line entry point and game loop.
+ * Handles loading puzzles (built-ins or custom 81-char strings),
+ * user commands (e.g., set, solve, check, help, quit), and printing via {@link Renderer}.
+ *
+ * <p>On load, the game triggers solver analysis to report unsolvable/multiple/unique,
+ * and caches a solved copy only for unique puzzles.</p>
+ */
 public class SudokuGame {
+    
+    /**
+     * Launch the CLI.
+     *
+     * @param args unused
+     */
     public static void main(String[] args) {
         Scanner in = new Scanner(System.in);
         System.out.print("Welcome to Sudoku! Choose a difficulty (easy/medium/hard): ");
