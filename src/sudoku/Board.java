@@ -10,6 +10,7 @@ package sudoku;
 public class Board {
     /** Board width/height (9 for a standard Sudoku). */
     public static final int SIZE = 9;
+    public static final int BOX = 3;
 
     private final Cell[][] grid = new Cell[SIZE][SIZE];
     
@@ -73,7 +74,7 @@ public class Board {
      * @param r row 0..SIZE-1
      * @param c col 0..SIZE-1
      * @param v digit 1..SIZE
-     * @return {@code true} if no row, column, or 3x3 box conflict
+     * @return {@code true} if no row, column, or BOXxBOX box conflict
      * @throws IllegalArgumentException if {@code v} is out of range
      */
     public boolean isValidPlacement(int r, int c, int v) { // Check if provided addition is valid
@@ -92,9 +93,9 @@ public class Board {
             }
         }
         if(valid){
-            int br = (r / 3) * 3, bc = (c/3) * 3;
-            for (int rr = br; rr < br + 3; rr++){ // Check the 3x3 box for existing value
-                for (int cc = bc; cc < bc + 3; cc++){
+            int br = (r / BOX) * BOX, bc = (c/BOX) * BOX;
+            for (int rr = br; rr < br + BOX; rr++){ // Check the BOXxBOX box for existing value
+                for (int cc = bc; cc < bc + BOX; cc++){
                     if (grid[rr][cc].getValue() == v){
                         valid = false;
                         break;
