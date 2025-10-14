@@ -50,7 +50,10 @@ public class Board {
      * @return the cell object at the given coordinates (never {@code null})
      * @throws ArrayIndexOutOfBoundsException if out of bounds
      */
-    public Cell cell(int r, int c) { return grid[r][c]; } // Getter method to pull cell without affecting the original grid
+    public Cell cell(int r, int c) {  // Getter method to pull cell without affecting the original grid
+        if(!inBounds(r, c)) throw new ArrayIndexOutOfBoundsException("Row and/or Cell is out of bounds.");
+        return grid[r][c];
+    }
 
     /**
      * Check whether (r,c) lies within the board.
