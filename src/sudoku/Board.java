@@ -157,17 +157,19 @@ public class Board {
         boolean solved = true;
         for (int r = 0; r < SIZE; r++){
             for (int c = 0; c < SIZE; c++){
-                int v = grid[r][c].getValue();
-                if (v == 0){
-                    solved = false;
-                    break;
-                }
-                grid[r][c].setValue(0); // Setting every point to 0 and then cylce through each cell to verify correct solution
-                boolean ok = isValidPlacement(r, c, v);
-                grid[r][c].setValue(v);
-                if(!ok) {
-                    solved = false;
-                    break;
+                if(!grid[r][c].isGiven()){
+                    int v = grid[r][c].getValue();
+                    if (v == 0){
+                        solved = false;
+                        break;
+                    }
+                    grid[r][c].setValue(0); // Setting every point to 0 and then cylce through each cell to verify correct solution
+                    boolean ok = isValidPlacement(r, c, v);
+                    grid[r][c].setValue(v);
+                    if(!ok) {
+                        solved = false;
+                        break;
+                    }
                 }
             }
         }
