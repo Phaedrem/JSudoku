@@ -17,8 +17,8 @@ Players can load puzzles, edit cells, check solutions, and auto-solve puzzles us
 
 **How to Compile and Run:**  
 From the project root directory:  
-javac sudoku/\*.java util/\*.java  
-java sudoku.SudokuGame  
+javac -d out src/sudoku/\*.java src/util/\*.java  
+java -cp out sudoku.SudokuGame
 
 **Commands Reference:**  
 help - Displays available commands  
