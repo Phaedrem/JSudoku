@@ -30,25 +30,27 @@ public class Solver {
     /* Private Methods */
     private static boolean solveRec(Board board) { // Helper to the solve Method so that searchCount can be reset to 0 on call and still allow recursion.
         searchCount++;
-        if (searchCount > SEARCH_LIMIT){
-            return false;
-        }
-        int[] pos = findEmpty(board);
-        if(pos == null){
-            return true;
-        }
-        int r = pos[0];
-        int c = pos[1];
-        for (int v = 1; v <= Board.SIZE; v++){
-            if (board.isValidPlacement(r, c, v)){
-                board.cell(r, c).setValue(v);
-                if (solveRec(board)){
-                    return true;
-                }
-                board.cell(r, c).setValue(0);
+        boolean solved = false;
+        if (searchCount <= SEARCH_LIMIT){
+            int[] pos = findEmpty(board);
+            if(pos == null){
+                solved = true;
+            } else {
+                int r = pos[0];
+                int c = pos[1];
+                for (int v = 1; v <= Board.SIZE; v++){
+                    if (board.isValidPlacement(r, c, v)){
+                        board.cell(r, c).setValue(v);
+                        if (solveRec(board)){
+                            solved = true;
+                        } else {
+                            board.cell(r, c).setValue(0);
+                        }
+                    }
+                }   
             }
         }
-        return false;
+        return solved;
     }
     
     private static int[] findEmpty(Board board){ // Searches for empty cells and returns it's location. 
