@@ -3,10 +3,14 @@ package ui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import sudoku.BoardView;
 
 public class BoardPanel extends JPanel {
     private final BoardView board;
+    private final List<CellView> cells = new ArrayList<>(81);
 
     public BoardPanel(BoardView board) {
         this.board = board;
@@ -14,8 +18,9 @@ public class BoardPanel extends JPanel {
 
         for (int r = 0; r < 9; r++) {
             for (int c = 0; c < 9; c++) {
-                JPanel cell = new CellView(r,c);
-
+                CellView cell = new CellView(r,c);
+                cell.setDigit(board.get(r, c));
+                cells.add(cell);
                 boolean shadedBox = ((r / 3) + (c / 3)) % 2 == 0;
                 if (shadedBox) {
                     cell.setBackground(new Color(230, 230, 240));
