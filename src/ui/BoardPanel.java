@@ -10,7 +10,7 @@ import sudoku.BoardView;
 
 public class BoardPanel extends JPanel {
     private final BoardView board;
-    private final List<CellView> cells = new ArrayList<>(81);
+    private final List<CellView> cells = new ArrayList<>(81); // Keeps track of cell values
 
     public BoardPanel(BoardView board) {
         this.board = board;
@@ -20,6 +20,7 @@ public class BoardPanel extends JPanel {
             for (int c = 0; c < 9; c++) {
                 CellView cell = new CellView(r,c);
                 cell.setDigit(board.get(r, c));
+                cell.setGiven(board.isGiven(r, c));
                 cells.add(cell);
                 boolean shadedBox = ((r / 3) + (c / 3)) % 2 == 0;
                 if (shadedBox) {

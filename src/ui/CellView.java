@@ -38,4 +38,13 @@ public class CellView extends JPanel{
         label.setText(value == 0 ? "" : Integer.toString(value));
     }
 
+    public void setGiven(boolean given){
+        if (given) {
+            label.setFont(label.getFont().deriveFont(Font.BOLD, 22f));
+            label.setForeground(new Color(30, 30, 30));
+        } else {
+            label.setFont(label.getFont().deriveFont(Font.PLAIN, 22f));
+            label.setForeground(new Color(20, 20, 120));
+        }
+    }
 }
