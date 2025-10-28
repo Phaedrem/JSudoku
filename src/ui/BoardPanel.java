@@ -10,7 +10,7 @@ public class BoardPanel extends JPanel {
 
     public BoardPanel(BoardView board) {
         this.board = board;
-        setLayout(new GridLayout(9, 9, 1, 1)); // 1-pixel gaps so color edges show
+        setLayout(new GridLayout(9, 9, 0, 0));
 
         for (int r = 0; r < 9; r++) {
             for (int c = 0; c < 9; c++) {
