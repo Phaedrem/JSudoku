@@ -13,8 +13,13 @@ public class BoardFacade implements BoardView {
         return board.cell(r, c).isGiven();
     }
 
-    @Override public void set(int r, int c, int val) {
-        if (!isGiven(r, c)) board.cell(r, c).setValue(val);
+    @Override public boolean trySet(int r, int c, int val) {
+        boolean success = false;
+        if (!isGiven(r, c)) {
+            board.cell(r, c).setValue(val);
+            success = true;
+        }
+        return success;
     }
 
     public Board getCore() { return board; }
