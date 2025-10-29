@@ -9,6 +9,7 @@ public class CellView extends JPanel{
     private final int row, col;
     private final JLabel label = new JLabel("");
     private boolean selected = false;
+    private boolean peer = false;
 
     public CellView(int row, int col) {
         this.row = row;
@@ -64,14 +65,23 @@ public class CellView extends JPanel{
         repaint();
     }
 
+    public void setPeerHighlighted(boolean p){
+        peer = p;
+        repaint();
+    }
+
     @Override
     protected void paintComponent(java.awt.Graphics g){
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g.create(); // Builds a visual overlay to prevent editting the original background color
         try {
+            if(peer){
+                g2.setColor(new Color(76,140,255,60));
+                g2.fillRect(0, 0, getWidth(), getHeight());
+            }
             if(selected){
-            g2.setColor(new Color(76,140,255,110));
-            g2.fillRect(0, 0, getWidth(), getHeight());
+                g2.setColor(new Color(76,140,255,110));
+                g2.fillRect(0, 0, getWidth(), getHeight());
             }
         } finally {
             g2.dispose();
