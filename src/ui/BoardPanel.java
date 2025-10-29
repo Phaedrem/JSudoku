@@ -83,6 +83,14 @@ public class BoardPanel extends JPanel {
                 }
             });
         }
+
+        im.put(KeyStroke.getKeyStroke("BACK_SPACE"), "clear");
+        im.put(KeyStroke.getKeyStroke("DELETE"), "clear");
+        im.put(KeyStroke.getKeyStroke("0"), "clear");
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD0, 0), "clear");
+        am.put("clear", new AbstractAction() {
+            @Override public void actionPerformed(ActionEvent e) { placeDigit(0); }
+        });
     }
 
     private void placeDigit(int val) {
