@@ -2,6 +2,7 @@ package ui;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class BoardPanel extends JPanel {
                 cells.add(cell);
                 cell.setBackground(new Color(250, 250, 255));
                 add(cell);
+                setupKeyBindings();
             }
         }
     }
@@ -62,5 +64,34 @@ public class BoardPanel extends JPanel {
             }
         }
         repaint();
+    }
+
+    private void setupKeyBindings(){
+        setFocusable(true);
+        var im = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        var am = getActionMap();
+
+        for (int d = 1; d <= 9; d++) { // Unqiuely identify each digit unput as seperate action via a loop
+            final int digit = d;
+            String key = "digit_" + d;
+            im.put(KeyStroke.getKeyStroke(Integer.toString(digit)), key);
+            am.put(key, new AbstractAction() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    placeDigit(digit);
+                }
+            });
+        }
+    }
+
+    private void placeDigit(int val) {
+        if (selRow >= 0){
+            boolean ok = board.trySet(selRow, selCol, val);
+            if(ok){
+                CellView cv = cells.get(compIndex(selRow, selCol));
+                cv.setDigit(board.get(selRow, selCol));
+                cv.repaint();
+            }
+        }
     }
 }
