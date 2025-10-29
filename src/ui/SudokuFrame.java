@@ -1,4 +1,3 @@
-// ui/SudokuFrame.java
 package ui;
 
 import javax.swing.*;
