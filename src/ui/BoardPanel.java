@@ -75,6 +75,7 @@ public class BoardPanel extends JPanel {
             final int digit = d;
             String key = "digit_" + d;
             im.put(KeyStroke.getKeyStroke(Integer.toString(digit)), key);
+            im.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD0 + digit, 0), key); 
             am.put(key, new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
