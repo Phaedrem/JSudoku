@@ -1,12 +1,14 @@
 package ui;
 
 import java.awt.*;
+import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
 public class CellView extends JPanel{
     private final int row, col;
     private final JLabel label = new JLabel("");
+    private boolean selected = false;
 
     public CellView(int row, int col) {
         this.row = row;
@@ -17,6 +19,15 @@ public class CellView extends JPanel{
         add(label);
         setPreferredSize((new Dimension(60, 60)));
         applyBoxBoarders();
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e){
+                if (getParent() instanceof BoardPanel bp){
+                    bp.setSelectedCell(row, col);
+                }
+            }
+        });
+
     }
     
     public int row() {return row; }
@@ -45,6 +56,25 @@ public class CellView extends JPanel{
         } else {
             label.setFont(label.getFont().deriveFont(Font.PLAIN, 22f));
             label.setForeground(new Color(20, 20, 120));
+        }
+    }
+
+    public void setSelected(boolean s){
+        selected = s;
+        repaint();
+    }
+
+    @Override
+    protected void paintComponent(java.awt.Graphics g){
+        super.paintComponent(g);
+        Graphics2D g2 = (Graphics2D) g.create(); // Builds a visual overlay to prevent editting the original background color
+        try {
+            if(selected){
+            g2.setColor(new Color(76,140,255,110));
+            g2.fillRect(0, 0, getWidth(), getHeight());
+            }
+        } finally {
+            g2.dispose();
         }
     }
 }

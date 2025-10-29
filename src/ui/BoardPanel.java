@@ -1,4 +1,3 @@
-// ui/BoardPanel.java
 package ui;
 
 import javax.swing.*;
@@ -11,6 +10,7 @@ import sudoku.BoardView;
 public class BoardPanel extends JPanel {
     private final BoardView board;
     private final List<CellView> cells = new ArrayList<>(81); // Keeps track of cell values
+    private int selRow = -1, selCol = -1;
 
     public BoardPanel(BoardView board) {
         this.board = board;
@@ -31,5 +31,17 @@ public class BoardPanel extends JPanel {
                 add(cell);
             }
         }
+    }
+
+    private int compIndex(int r, int c) { return r * 9 + c; }
+
+    public void setSelectedCell(int r, int c){ 
+        if (selRow >= 0){
+            cells.get(compIndex(selRow, selCol)).setSelected(false); // Clear old highlight
+        }
+        selRow = r;
+        selCol = c;
+        cells.get(compIndex(r, c)).setSelected(true);
+        requestFocusInWindow();
     }
 }
