@@ -120,10 +120,23 @@ public class BoardPanel extends JPanel {
                     int r = Math.max(0, Math.min(8, selRow + dr));
                     int c = Math.max(0, Math.min(8, selCol + dc));
                     setSelectedCell(r, c);
+                } else {
+                    selectFirstEditable();
                 }
             }
         });
     }
 
+    private void selectFirstEditable(){
+        for (int r = 0; r < 9; r++){
+            for (int c = 0; c < 9; c++){
+                if(!board.isGiven(r, c)){
+                    setSelectedCell(r, c);
+                    return;
+                }
+            }
+        }
+        setSelectedCell(0,0);
+    }
 
 }
