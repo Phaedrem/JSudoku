@@ -71,11 +71,11 @@ public class BoardPanel extends JPanel {
         var im = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         var am = getActionMap();
 
-        for (int d = 1; d <= 9; d++) { // Unqiuely identify each digit unput as seperate action via a loop
+        for (int d = 1; d <= 9; d++) { // Unqiuely identify each 1-9 digit input as seperate action via a loop
             final int digit = d;
             String key = "digit_" + d;
-            im.put(KeyStroke.getKeyStroke(Integer.toString(digit)), key);
-            im.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD0 + digit, 0), key); 
+            im.put(KeyStroke.getKeyStroke(Integer.toString(digit)), key); // Number Row
+            im.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD0 + digit, 0), key);  // Numpad
             am.put(key, new AbstractAction() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -83,14 +83,19 @@ public class BoardPanel extends JPanel {
                 }
             });
         }
-
-        im.put(KeyStroke.getKeyStroke("BACK_SPACE"), "clear");
+        
+        im.put(KeyStroke.getKeyStroke("BACK_SPACE"), "clear"); // Clear inputs
         im.put(KeyStroke.getKeyStroke("DELETE"), "clear");
         im.put(KeyStroke.getKeyStroke("0"), "clear");
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD0, 0), "clear");
         am.put("clear", new AbstractAction() {
             @Override public void actionPerformed(ActionEvent e) { placeDigit(0); }
         });
+
+        bindArrow("LEFT", 0, -1); // Allow navigation via arrow keys
+        bindArrow("RIGHT", 0, 1);
+        bindArrow("UP", -1, 0);
+        bindArrow("DOWN", 1, 0);
     }
 
     private void placeDigit(int val) {
@@ -103,4 +108,22 @@ public class BoardPanel extends JPanel {
             }
         }
     }
+
+    private void bindArrow(String name, int dr, int dc) {
+    InputMap im = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+    ActionMap am = getActionMap();
+    im.put(KeyStroke.getKeyStroke(name), "move_" + name);
+    am.put("move_" + name, new AbstractAction() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (selRow >= 0){
+                int r = Math.max(0, Math.min(8, selRow + dr));
+                int c = Math.max(0, Math.min(8, selCol + dc));
+                setSelectedCell(r, c);
+            }
+        }
+    });
+}
+
+
 }
