@@ -110,20 +110,20 @@ public class BoardPanel extends JPanel {
     }
 
     private void bindArrow(String name, int dr, int dc) {
-    InputMap im = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-    ActionMap am = getActionMap();
-    im.put(KeyStroke.getKeyStroke(name), "move_" + name);
-    am.put("move_" + name, new AbstractAction() {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if (selRow >= 0){
-                int r = Math.max(0, Math.min(8, selRow + dr));
-                int c = Math.max(0, Math.min(8, selCol + dc));
-                setSelectedCell(r, c);
+        InputMap im = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap am = getActionMap();
+        im.put(KeyStroke.getKeyStroke(name), "move_" + name);
+        am.put("move_" + name, new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (selRow >= 0){
+                    int r = Math.max(0, Math.min(8, selRow + dr));
+                    int c = Math.max(0, Math.min(8, selCol + dc));
+                    setSelectedCell(r, c);
+                }
             }
-        }
-    });
-}
+        });
+    }
 
 
 }
