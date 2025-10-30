@@ -101,13 +101,13 @@ public class BoardPanel extends JPanel {
     private void placeDigit(int val) {
         if (selRow >= 0){
             boolean ok = board.trySet(selRow, selCol, val);
-            if(board.isSolved()){
-                JOptionPane.showMessageDialog(this,"Puzzle Complete!");
-            }
             if(ok){
                 CellView cv = cells.get(compIndex(selRow, selCol));
                 cv.setDigit(board.get(selRow, selCol));
                 cv.repaint();
+                if(board.isSolved()){
+                   JOptionPane.showMessageDialog(this,"Puzzle Complete!");
+            }
             }
         }
     }
