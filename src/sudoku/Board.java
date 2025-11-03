@@ -43,6 +43,24 @@ public class Board {
         }
     }
 
+    private Board(int[][] start, boolean[][] givens) {
+    if (start == null) throw new NullPointerException("Passed 2D array is null");
+    if (start.length != SIZE) throw new IllegalArgumentException("Passed array must have " + SIZE + " rows");
+    for (int r = 0; r < SIZE; r++) {
+        int[] row = start[r];
+        if (row == null || row.length != SIZE) {
+            throw new IllegalArgumentException("Row " + r + " must have " + SIZE + " columns");
+        }
+        for (int c = 0; c < SIZE; c++) {
+            int v = row[c];
+            if (v < 0 || v > SIZE) {
+                throw new IllegalArgumentException("Value out of range at (" + r + "," + c+ ")");
+            }
+            grid[r][c] = new Cell(v, givens[r][c]);
+        }
+    }
+}
+
     /**
      * Get the {@link Cell} at (r,c).
      *
@@ -193,4 +211,23 @@ public class Board {
         }
         return new Board(arr);
     }
+
+    public static Board fromString(String values, String mask) {
+    if (values == null || mask == null)
+        throw new NullPointerException("values/mask");
+    final int N = SIZE * SIZE;
+    if (values.length() != N || mask.length() != N)
+        throw new IllegalArgumentException("values/mask length must be SIZE*SIZE");
+
+    int[][] start = new int[SIZE][SIZE];
+    boolean[][] givens = new boolean[SIZE][SIZE];
+
+    for (int i = 0; i < N; i++) {
+        int r = i / SIZE, c = i % SIZE;
+        char ch = values.charAt(i);
+        start[r][c] = (ch == '0' || ch == '.') ? 0 : (ch - '0');
+        givens[r][c] = (mask.charAt(i) == '1');
+    }
+    return new Board(start, givens);
+}
 }
