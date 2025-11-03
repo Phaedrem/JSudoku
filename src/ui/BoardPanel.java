@@ -142,4 +142,7 @@ public class BoardPanel extends JPanel {
         setSelectedCell(0,0);
     }
 
+    public BoardView getView(){
+        return this.board;
+    }
 }
