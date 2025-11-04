@@ -35,6 +35,9 @@ public record ColorTheme(
         private final ColorTheme theme;
         Preset(ColorTheme t){ this.theme = t;}
         public ColorTheme theme(){ return theme; } 
-        public String displayName() { return name().replace("_", " "); }
+        public String displayName() {
+            String formatted = name().replace("_", " ").toLowerCase();
+            return formatted.substring(0, 1).toUpperCase() + formatted.substring(1);
+        }
     }
 }
