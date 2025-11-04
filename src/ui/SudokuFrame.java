@@ -3,6 +3,9 @@ package ui;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import sudoku.Board;
 import sudoku.BoardFacade;
 import sudoku.BoardView;
@@ -12,7 +15,12 @@ public class SudokuFrame extends JFrame {
 
     public SudokuFrame(BoardView board) {
         super("JSudoku");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        addWindowListener(new WindowAdapter() {
+            @Override public void windowClosing(WindowEvent e) {
+                promptExit();
+            }
+        });
         setLayout(new BorderLayout());
 
         setBoardView(board);
@@ -38,6 +46,7 @@ public class SudokuFrame extends JFrame {
         JMenuItem loadItem = new JMenuItem("Load Game");
         loadItem.addActionListener(e -> loadGame());
         JMenuItem exitItem = new JMenuItem("Exit");
+        exitItem.addActionListener(e -> promptExit());
 
         filMenu.add(saveItem);
         filMenu.add(loadItem);
@@ -62,6 +71,24 @@ public class SudokuFrame extends JFrame {
 
     private void startNewPuzzle(ActionEvent e){
         String label = ((JMenuItem) e.getSource()).getText().toLowerCase();
+
+        Object[] options = {"Save", "Don't Save", "Cancel"};
+        int choice = JOptionPane.showOptionDialog(
+                this,
+                "Save your game before starting a new one?",
+                "New Game",
+                JOptionPane.YES_NO_CANCEL_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[0]);
+
+        if (choice == JOptionPane.CANCEL_OPTION || choice == -1) return;
+        if (choice == JOptionPane.YES_OPTION){
+            boolean saved = saveGame();
+            if (!saved)  return;
+        }
+
         String seed = sudoku.Seeds.BY_NAME.get(label);
         Board core = Board.fromString(seed);
         BoardView view = new BoardFacade(core);
@@ -78,13 +105,13 @@ public class SudokuFrame extends JFrame {
         repaint();
     }
 
-    private void saveGame() {
-        if (boardPanel == null) return;
+    private boolean saveGame() {
+        if (boardPanel == null) return false;
 
         // Ask where to save
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Save Sudoku");
-        if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) return;
+        if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) return false;
         // Create strings to save
         StringBuilder vals = new StringBuilder(Board.SIZE*Board.SIZE);
         StringBuilder mask = new StringBuilder(Board.SIZE*Board.SIZE);
@@ -102,7 +129,7 @@ public class SudokuFrame extends JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Could not read current board:\n" + ex.getMessage(),
                     "Save Game", JOptionPane.ERROR_MESSAGE);
-            return;
+            return false;
         }
         // Output strings into file
         java.io.File file = chooser.getSelectedFile();
@@ -110,9 +137,11 @@ public class SudokuFrame extends JFrame {
             out.println("JSUDOKU v1");
             out.println(vals);
             out.println(mask);
+            return true;
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Failed to save:\n" + ex.getMessage(),
                     "Save Game", JOptionPane.ERROR_MESSAGE);
+            return false;
         }
     }
 
@@ -144,6 +173,29 @@ public class SudokuFrame extends JFrame {
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Failed to load:\n" + ex.getMessage(),
                     "Load Game", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void promptExit(){
+        Object[] options = {"Save", "Don't Save", "Cancel"};
+        int choice = JOptionPane.showOptionDialog(
+            this,
+            "Save game before exiting?",
+            "Exit",
+            JOptionPane.YES_NO_CANCEL_OPTION,
+            JOptionPane.QUESTION_MESSAGE,
+             null,
+             options,
+             options[0]);
+
+        if (choice == JOptionPane.CANCEL_OPTION || choice == -1) return;
+        if (choice == JOptionPane.NO_OPTION) {
+            dispose();
+            return;
+        }
+        boolean saved = saveGame();
+        if (saved) {
+            dispose();
         }
     }
 }
