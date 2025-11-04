@@ -8,6 +8,7 @@ public record ColorTheme(
     Color textEditable,
     Color selectedFill,
     Color peerFill,
+    Color valueFill,
     Color gridLine
 ) {
     public enum Preset {
@@ -17,6 +18,7 @@ public record ColorTheme(
             new Color(50,90,175),    // textEditable
             new Color(187,222,251),  // selectedFill
             new Color(226,235,243),  // peerFill
+            new Color(195,215,234),  // valFill
             new Color(52,72,97)   // gridLine
         )),
         MIDNIGHT(new ColorTheme(
@@ -25,11 +27,17 @@ public record ColorTheme(
             new Color(140,190,255),
             new Color(70,75,90),
             new Color(50,55,70),
+            new Color(100,150,255),
             new Color(90,95,105)
         )),
         HIGH_CONTRAST(new ColorTheme(
-            Color.WHITE, Color.BLACK, Color.BLACK,
-            Color.YELLOW, new Color(210,210,210), Color.BLACK
+            Color.WHITE,
+            Color.BLACK,
+            Color.BLACK,
+            Color.YELLOW,
+            new Color(210,210,210),
+            new Color(255,128,0),
+            Color.BLACK
         ));
 
         private final ColorTheme theme;
