@@ -48,12 +48,14 @@ public class BoardPanel extends JPanel {
     private void updateHighlights() {
         for (CellView cv : cells){
             cv.setPeerHighlighted(false);
+            cv.setSameValueHighlight(false);
             cv.setSelected(false);
         }
         if (selRow >= 0){
             cells.get(compIndex(selRow, selCol)).setSelected(true);
             int boxR = selRow/3;
             int boxC = selCol/3;
+            int selVal = board.get(selRow, selCol);
             for (int r = 0; r < Board.SIZE; r++){
                 for(int c = 0; c < Board.SIZE; c++){
                     if (r == selRow && c == selCol) continue; // Skip the "selected" cell and move on to the next loop
@@ -62,6 +64,9 @@ public class BoardPanel extends JPanel {
                     boolean sameBox = ((r/3) == boxR) && ((c/3) == boxC);
                     if (sameRow || sameCol || sameBox){
                         cells.get(compIndex(r, c)).setPeerHighlighted(true);
+                    }
+                    if (selVal != 0 && board.get(r,c) == selVal){
+                        cells.get(compIndex(r, c)).setSameValueHighlight(true);
                     }
                 }
             }

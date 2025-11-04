@@ -10,6 +10,7 @@ public class CellView extends JPanel{
     private final JLabel label = new JLabel("");
     private boolean selected = false;
     private boolean peer = false;
+    private boolean sameValue = false;
     private ColorTheme theme = ColorTheme.Preset.CLASSIC.theme();
 
     public CellView(int row, int col) {
@@ -71,6 +72,11 @@ public class CellView extends JPanel{
         repaint();
     }
 
+    public void setSameValueHighlight(boolean on){
+        sameValue = on;
+        repaint();
+    }
+
     @Override
     protected void paintComponent(java.awt.Graphics g){
         super.paintComponent(g);
@@ -78,6 +84,10 @@ public class CellView extends JPanel{
         try {
             if(peer){
                 g2.setColor(theme.peerFill());
+                g2.fillRect(0, 0, getWidth(), getHeight());
+            }
+            if(sameValue){
+                g2.setColor(theme.valueFill());
                 g2.fillRect(0, 0, getWidth(), getHeight());
             }
             if(selected){
