@@ -12,6 +12,7 @@ import sudoku.BoardView;
 
 public class SudokuFrame extends JFrame {
     private BoardPanel boardPanel;
+    private boolean pencilMode = false;
 
     public SudokuFrame(BoardView board) {
         super("JSudoku");
@@ -62,9 +63,16 @@ public class SudokuFrame extends JFrame {
             });
             colors.add(item);
         }
+
+        JCheckBoxMenuItem pencilItem = new JCheckBoxMenuItem("Pencil Mode");
+        pencilItem.setState(pencilMode);
+        pencilItem.addActionListener(e -> {
+            pencilMode = pencilItem.getState();
+        });
         settingsMenu.add(colors);
         bar.add(filMenu);
         bar.add(settingsMenu);
+        bar.add(pencilItem);
 
         return bar;
     }
