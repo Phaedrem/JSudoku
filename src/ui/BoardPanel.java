@@ -6,19 +6,20 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import sudoku.Board;
 import sudoku.BoardView;
 
 public class BoardPanel extends JPanel {
     private final BoardView board;
-    private final List<CellView> cells = new ArrayList<>(81); // Keeps track of cell values
+    private final List<CellView> cells = new ArrayList<>(Board.SIZE); // Keeps track of cell values
     private int selRow = -1, selCol = -1;
 
     public BoardPanel(BoardView board) {
         this.board = board;
-        setLayout(new GridLayout(9, 9, 0, 0));
+        setLayout(new GridLayout(Board.SIZE, Board.SIZE, 0, 0));
 
-        for (int r = 0; r < 9; r++) {
-            for (int c = 0; c < 9; c++) {
+        for (int r = 0; r < Board.SIZE; r++) {
+            for (int c = 0; c < Board.SIZE; c++) {
                 CellView cell = new CellView(r,c);
                 cell.setDigit(board.get(r, c));
                 cell.setGiven(board.isGiven(r, c));
@@ -30,7 +31,7 @@ public class BoardPanel extends JPanel {
         }
     }
 
-    private int compIndex(int r, int c) { return r * 9 + c; }
+    private int compIndex(int r, int c) { return r * Board.SIZE + c; }
 
     public void setSelectedCell(int r, int c){ 
         if (selRow >= 0){
@@ -51,8 +52,8 @@ public class BoardPanel extends JPanel {
             cells.get(compIndex(selRow, selCol)).setSelected(true);
             int boxR = selRow/3;
             int boxC = selCol/3;
-            for (int r = 0; r < 9; r++){
-                for(int c = 0; c < 9; c++){
+            for (int r = 0; r < Board.SIZE; r++){
+                for(int c = 0; c < Board.SIZE; c++){
                     if (r == selRow && c == selCol) continue; // Skip the "selected" cell and move on to the next loop
                     boolean sameRow = (r == selRow);
                     boolean sameCol = (c == selCol);
@@ -71,7 +72,7 @@ public class BoardPanel extends JPanel {
         var im = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         var am = getActionMap();
 
-        for (int d = 1; d <= 9; d++) { // Unqiuely identify each 1-9 digit input as seperate action via a loop
+        for (int d = 1; d <= Board.SIZE; d++) { // Unqiuely identify each 1-SIZE digit input as seperate action via a loop
             final int digit = d;
             String key = "digit_" + d;
             im.put(KeyStroke.getKeyStroke(Integer.toString(digit)), key); // Number Row
@@ -131,8 +132,8 @@ public class BoardPanel extends JPanel {
     }
 
     private void selectFirstEditable(){
-        for (int r = 0; r < 9; r++){
-            for (int c = 0; c < 9; c++){
+        for (int r = 0; r < Board.SIZE; r++){
+            for (int c = 0; c < Board.SIZE; c++){
                 if(!board.isGiven(r, c)){
                     setSelectedCell(r, c);
                     return;

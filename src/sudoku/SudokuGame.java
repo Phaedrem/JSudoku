@@ -156,7 +156,7 @@ public class SudokuGame {
                             break; 
                         } 
                         
-                        if (v < 1 || v > 9) {
+                        if (v < 1 || v > Board.SIZE) {
                             System.out.println("Value must be 1-9");
                             break;
                         }

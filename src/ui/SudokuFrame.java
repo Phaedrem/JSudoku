@@ -80,15 +80,15 @@ public class SudokuFrame extends JFrame {
         chooser.setDialogTitle("Save Sudoku");
         if (chooser.showSaveDialog(this) != JFileChooser.APPROVE_OPTION) return;
         // Create strings to save
-        StringBuilder vals = new StringBuilder(81);
-        StringBuilder mask = new StringBuilder(81);
+        StringBuilder vals = new StringBuilder(Board.SIZE*Board.SIZE);
+        StringBuilder mask = new StringBuilder(Board.SIZE*Board.SIZE);
         try {
             BoardView v = boardPanel.getView();
             
-            for (int r = 0; r < 9; r++) {
-                for (int c = 0; c < 9; c++) {
+            for (int r = 0; r < Board.SIZE; r++) {
+                for (int c = 0; c < Board.SIZE; c++) {
                     int val = v.get(r, c);
-                    vals.append((char)('0' + Math.max(0, Math.min(val, 9))));
+                    vals.append((char)('0' + Math.max(0, Math.min(val, Board.SIZE))));
                     mask.append(v.isGiven(r, c) ? '1' : '0');
                 }
             }
@@ -124,7 +124,7 @@ public class SudokuFrame extends JFrame {
             String values  = br.readLine();
             String mask  = br.readLine();
 
-            if (header == null || values == null || values.length() != 81) {
+            if (header == null || values == null || values.length() != Board.SIZE*Board.SIZE) {
                 throw new IllegalArgumentException("Invalid save file format");
             }
 
