@@ -13,6 +13,7 @@ public class BoardPanel extends JPanel {
     private final BoardView board;
     private final List<CellView> cells = new ArrayList<>(Board.SIZE); // Keeps track of cell values
     private int selRow = -1, selCol = -1;
+    private ColorTheme theme = ColorTheme.Preset.CLASSIC.theme();
 
     public BoardPanel(BoardView board) {
         this.board = board;
@@ -21,10 +22,11 @@ public class BoardPanel extends JPanel {
         for (int r = 0; r < Board.SIZE; r++) {
             for (int c = 0; c < Board.SIZE; c++) {
                 CellView cell = new CellView(r,c);
+                cell.setTheme(theme);
+                cell.setBackground(theme.cellBackground());
                 cell.setDigit(board.get(r, c));
                 cell.setGiven(board.isGiven(r, c));
                 cells.add(cell);
-                cell.setBackground(new Color(250, 250, 255));
                 add(cell);
                 setupKeyBindings();
             }
@@ -146,4 +148,15 @@ public class BoardPanel extends JPanel {
     public BoardView getView(){
         return this.board;
     }
+
+    public void setTheme(ColorTheme t){
+        this.theme = t;
+        for (CellView cv : cells){
+            cv.setTheme(t);
+            cv.setBackground(t.cellBackground());
+            cv.setGiven(board.isGiven(cv.row(), cv.col()));
+        }
+        repaint();
+    }
+
 }

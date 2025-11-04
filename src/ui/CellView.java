@@ -10,6 +10,7 @@ public class CellView extends JPanel{
     private final JLabel label = new JLabel("");
     private boolean selected = false;
     private boolean peer = false;
+    private ColorTheme theme = ColorTheme.Preset.CLASSIC.theme();
 
     public CellView(int row, int col) {
         this.row = row;
@@ -42,7 +43,7 @@ public class CellView extends JPanel{
         if (row == 8) bottom = 3;
         if (col == 8) right = 3;
 
-        Border b = new MatteBorder(top, left, bottom, right, getForeground());
+        Border b = new MatteBorder(top, left, bottom, right, theme.gridLine());
         setBorder(b);
     }
 
@@ -53,10 +54,10 @@ public class CellView extends JPanel{
     public void setGiven(boolean given){
         if (given) {
             label.setFont(label.getFont().deriveFont(Font.BOLD, 22f));
-            label.setForeground(new Color(30, 30, 30));
+            label.setForeground(theme.textGiven());
         } else {
             label.setFont(label.getFont().deriveFont(Font.PLAIN, 22f));
-            label.setForeground(new Color(20, 20, 120));
+            label.setForeground(theme.textEditable());
         }
     }
 
@@ -76,15 +77,21 @@ public class CellView extends JPanel{
         Graphics2D g2 = (Graphics2D) g.create(); // Builds a visual overlay to prevent editting the original background color
         try {
             if(peer){
-                g2.setColor(new Color(76,140,255,60));
+                g2.setColor(theme.peerFill());
                 g2.fillRect(0, 0, getWidth(), getHeight());
             }
             if(selected){
-                g2.setColor(new Color(76,140,255,110));
+                g2.setColor(theme.selectedFill());
                 g2.fillRect(0, 0, getWidth(), getHeight());
             }
         } finally {
             g2.dispose();
         }
+    }
+
+    public void setTheme(ColorTheme t){
+        this.theme = t;
+        setForeground(theme.gridLine());
+        repaint();
     }
 }
