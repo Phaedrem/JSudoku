@@ -44,12 +44,18 @@ public class SudokuFrame extends JFrame {
         filMenu.addSeparator();
         filMenu.add(exitItem);
 
-        JMenu viewMenu = new JMenu("Settings");
-        JMenuItem settingsItem = new JMenuItem("Colors");
-        viewMenu.add(settingsItem);
-
+        JMenu settingsMenu = new JMenu("Settings");
+        JMenu colors = new JMenu("Colors");
+        for (ui.ColorTheme.Preset p : ui.ColorTheme.Preset.values()){
+            JMenuItem item = new JMenuItem(p.displayName());
+            item.addActionListener(e -> {
+                if (boardPanel != null) boardPanel.setTheme(p.theme());
+            });
+            colors.add(item);
+        }
+        settingsMenu.add(colors);
         bar.add(filMenu);
-        bar.add(viewMenu);
+        bar.add(settingsMenu);
 
         return bar;
     }
