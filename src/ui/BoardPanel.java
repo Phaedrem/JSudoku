@@ -9,6 +9,11 @@ import java.util.List;
 import sudoku.Board;
 import sudoku.BoardView;
 
+/**
+ * Main board component that lays out a SIZE×SIZE grid of {@link CellView}s,
+ * owns selection state, handles keyboard input (digits, clear, arrows),
+ * updates cell highlights (selected/peers/same-value), and reports solved state.
+ */
 public class BoardPanel extends JPanel {
     private final BoardView board;
     private final List<CellView> cells = new ArrayList<>(Board.SIZE); // Keeps track of cell values
@@ -16,6 +21,12 @@ public class BoardPanel extends JPanel {
     private ColorTheme theme = ColorTheme.Preset.CLASSIC.theme();
     private boolean pencilMode = false;
 
+    /**
+     * Constructs a panel for the supplied {@link sudoku.BoardView} model.
+     * Populates the grid with {@link CellView} instances, applying the current theme,
+     * initial values, and given state.
+     * @param board the backing view model
+     */
     public BoardPanel(BoardView board) {
         this.board = board;
         setLayout(new GridLayout(Board.SIZE, Board.SIZE, 0, 0));
@@ -34,8 +45,15 @@ public class BoardPanel extends JPanel {
         }
     }
 
+    /** Converts (row, col) to the linear index into {@code cells}. */
     private int compIndex(int r, int c) { return r * Board.SIZE + c; }
 
+    /**
+     * Recomputes visual state for all cells based on the current selection:
+     * clears previous flags, marks the selected cell, highlights peers
+     * (same row/column/box), and optionally same-value cells.
+     * Triggers a repaint at the end.
+     */
     private void updateHighlights() {
         for (CellView cv : cells){
             cv.setPeerHighlighted(false);
@@ -65,6 +83,11 @@ public class BoardPanel extends JPanel {
         repaint();
     }
 
+    /**
+     * Installs key bindings for digits (1..SIZE), clear (Backspace/Delete/0),
+     * and arrow-key navigation. Actions dispatch to {@link #placeDigit(int)}
+     * and {@link #bindArrow(String, int, int)}.
+     */
     private void setupKeyBindings(){
         setFocusable(true);
         var im = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
@@ -96,7 +119,13 @@ public class BoardPanel extends JPanel {
         bindArrow("UP", -1, 0);
         bindArrow("DOWN", 1, 0);
     }
-
+    
+    /**
+     * Handles a numeric or clear action for the currently selected cell.
+     * If pencil mode is enabled and the cell is empty, toggles a pencil mark.
+     * Otherwise attempts a model update; on success updates the view,
+     * shows a solved dialog if complete, and leaves highlighting to the caller.
+     */
     private void placeDigit(int val) {
         if (selRow >= 0){
             CellView cv = cells.get(compIndex(selRow, selCol));
@@ -118,6 +147,10 @@ public class BoardPanel extends JPanel {
         }
     }
 
+    /**
+     * Binds one arrow key to move the selection by (dr, dc), clamped to bounds.
+     * If nothing is selected yet, selects the first editable cell.
+     */
     private void bindArrow(String name, int dr, int dc) {
         InputMap im = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap am = getActionMap();
@@ -136,6 +169,10 @@ public class BoardPanel extends JPanel {
         });
     }
 
+    /**
+     * Selects the first cell that is not a given; falls back to (0,0) if none.
+     * Used on initial navigation when no selection exists.
+     */
     private void selectFirstEditable(){
         for (int r = 0; r < Board.SIZE; r++){
             for (int c = 0; c < Board.SIZE; c++){
@@ -148,12 +185,17 @@ public class BoardPanel extends JPanel {
         setSelectedCell(0,0);
     }
 
+    /**
+     * Clears pencil mark {@code val} from all peers of (selRow, selCol):
+     * same row, same column, and same box. Only affects empty cells.
+     */
     private void clearPeerPencils(int selRow, int selCol, int val){
         if (val > 0 && val <= Board.SIZE) {
             for (int c = 0; c < Board.SIZE; c++) {
                 if (c != selCol && board.get(selRow, c) == 0) {
                     cells.get(compIndex(selRow, c)).removePencil(val);
-                } else if (c != selRow && board.get(c, selCol) == 0) {
+                }
+                if (c != selRow && board.get(c, selCol) == 0) {
                     cells.get(compIndex(c, selCol)).removePencil(val);
                 }
             }
@@ -169,10 +211,19 @@ public class BoardPanel extends JPanel {
         }
     }
 
+     /**
+     * Returns the view model currently displayed by this panel.
+     * @return the {@link sudoku.BoardView}
+     */
     public BoardView getView(){
         return this.board;
     }
 
+    /**
+     * Changes the active {@link ui.ColorTheme} and reapplies it to all cells
+     * (background, given/editable text colors, grid lines), then repaints.
+     * @param t the theme to apply
+     */
     public void setTheme(ColorTheme t){
         this.theme = t;
         for (CellView cv : cells){
@@ -183,11 +234,22 @@ public class BoardPanel extends JPanel {
         repaint();
     }
 
+    /**
+     * Enables/disables pencil input mode.
+     * When enabled, digit keys toggle pencil marks for the selected empty cell.
+     * @param on true to enable pencil mode; false to disable
+     */
     public void setPencilMode(boolean on){
         this.pencilMode = on;
         repaint();
     }
 
+    /**
+     * Programmatically selects a cell and updates highlight overlays.
+     * Requests focus for keyboard input.
+     * @param r row index
+     * @param c column index
+     */
     public void setSelectedCell(int r, int c){ 
         if (selRow >= 0){
             cells.get(compIndex(selRow, selCol)).setSelected(false); // Clear old highlight

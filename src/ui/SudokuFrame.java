@@ -10,10 +10,20 @@ import sudoku.Board;
 import sudoku.BoardFacade;
 import sudoku.BoardView;
 
+/**
+ * Top-level application window for JSudoku.
+ * <p>
+ * Owns the {@link BoardPanel} currently displayed, the menu bar (New/Save/Load/Exit
+ * and Settings → Colors), and the logic to swap in a new puzzle or persist/load a game.
+ */
 public class SudokuFrame extends JFrame {
     private BoardPanel boardPanel;
     private boolean pencilMode = false;
 
+    /**
+     * Creates a frame showing the given Sudoku board.
+     * @param board initial {@link sudoku.BoardView} to display
+     */
     public SudokuFrame(BoardView board) {
         super("JSudoku");
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -31,6 +41,15 @@ public class SudokuFrame extends JFrame {
         setLocationRelativeTo(null);
     }
 
+    /**
+     * Builds the application menu bar.
+     * <ul>
+     *   <li><b>File → New Game</b>: choose difficulty; starts a new board from {@code Seeds}.</li>
+     *   <li><b>File → Save/Load</b>: write/read current grid and given-mask.</li>
+     *   <li><b>Settings → Colors</b>: switch active {@link ui.ColorTheme} preset at runtime.</li>
+     * </ul>
+     * @return a configured {@link JMenuBar}
+     */
     private JMenuBar createMenuBar(){
         JMenuBar bar = new JMenuBar();
         JMenu filMenu = new JMenu("File");
@@ -78,6 +97,12 @@ public class SudokuFrame extends JFrame {
         return bar;
     }
 
+    /**
+     * Starts a new puzzle from the selected difficulty menu item by looking up
+     * a seed string in {@code sudoku.Seeds.BY_NAME}, constructing a {@link sudoku.Board},
+     * wrapping it in a {@link sudoku.BoardFacade}, and installing it in the UI.
+     * @param e action event from a difficulty menu item
+     */
     private void startNewPuzzle(ActionEvent e){
         String label = ((JMenuItem) e.getSource()).getText().toLowerCase();
 
@@ -104,6 +129,11 @@ public class SudokuFrame extends JFrame {
         setBoardView(view);
     }
 
+    /**
+     * Replaces the center {@link BoardPanel} with a new one for the provided view.
+     * Ensures proper removal/addition in the content pane and triggers layout/paint.
+     * @param view the {@link sudoku.BoardView} to display
+     */
     private void setBoardView(BoardView view){
         if (boardPanel != null){
             getContentPane().remove(boardPanel);
@@ -114,6 +144,11 @@ public class SudokuFrame extends JFrame {
         repaint();
     }
 
+    /**
+     * Opens a file chooser and writes the current board state to disk:
+     * a simple header, a line of cell values, and a line of the given-mask.
+     * Shows an error dialog if persistence fails.
+     */
     private boolean saveGame() {
         if (boardPanel == null) return false;
 
@@ -154,7 +189,12 @@ public class SudokuFrame extends JFrame {
         }
     }
 
-
+    /**
+     * Opens a file chooser and reads a saved board from disk.
+     * Accepts files saved with or without a given-mask line; validates lengths,
+     * reconstructs a {@link sudoku.Board} accordingly, wraps in a {@link sudoku.BoardFacade},
+     * and replaces the current view. Shows an error dialog on failure.
+     */
     private void loadGame(){
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Load Sudoku");
@@ -185,6 +225,15 @@ public class SudokuFrame extends JFrame {
         }
     }
 
+    /**
+     * Prompts the user before exiting the application.
+     * <p>
+     * Displays a confirmation dialog asking whether to save the current game
+     * before quitting. If the user chooses to save, {@link #saveGame()} is invoked.
+     * Choosing "Don't Save" immediately closes the window, and "Cancel" aborts
+     * the exit operation. This provides the same safety behavior used for
+     * {@code New Game}, preventing accidental data loss.
+     */
     private void promptExit(){
         Object[] options = {"Save", "Don't Save", "Cancel"};
         int choice = JOptionPane.showOptionDialog(

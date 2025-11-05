@@ -2,6 +2,19 @@ package ui;
 
 import java.awt.Color;
 
+/**
+ * Immutable palette for the Sudoku UI.
+ * <ul>
+ *   <li>{@code cellBackground}: cell background color</li>
+ *   <li>{@code textGiven}: color for given (clue) digits</li>
+ *   <li>{@code textEditable}: color for user-entered digits</li>
+ *   <li>{@code textPencil}: color for pencil marks in empty cells</li>
+ *   <li>{@code selectedFill}: overlay fill for the selected cell</li>
+ *   <li>{@code peerFill}: overlay fill for peers (same row/col/box)</li>
+ *   <li>{@code valueFill}: overlay fill for same-value highlight</li>
+ *   <li>{@code gridLine}: grid/border color</li>
+ * </ul>
+ */
 public record ColorTheme(
     Color cellBackground,
     Color textGiven,
@@ -12,6 +25,11 @@ public record ColorTheme(
     Color valueFill,
     Color gridLine
 ) {
+    /**
+     * Built-in, named color presets.
+     * Each enum constant wraps a {@link ColorTheme} instance and provides
+     * a human-friendly display name for menus.
+     */
     public enum Preset {
         CLASSIC(new ColorTheme(
             new Color(255,255,255),  // cellBackground
@@ -46,7 +64,15 @@ public record ColorTheme(
 
         private final ColorTheme theme;
         Preset(ColorTheme t){ this.theme = t;}
+        
+        /** @return the {@link ColorTheme} instance associated with this preset. */
         public ColorTheme theme(){ return theme; } 
+        
+        /**
+         * Formats the enum name as a user-facing label
+         * (e.g., "HIGH_CONTRAST" → "High contrast").
+         * @return display name for menus
+         */
         public String displayName() {
             String formatted = name().replace("_", " ").toLowerCase();
             return formatted.substring(0, 1).toUpperCase() + formatted.substring(1);
