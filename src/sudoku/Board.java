@@ -213,21 +213,21 @@ public class Board {
     }
 
     public static Board fromString(String values, String mask) {
-    if (values == null || mask == null)
-        throw new NullPointerException("values/mask");
-    final int N = SIZE * SIZE;
-    if (values.length() != N || mask.length() != N)
-        throw new IllegalArgumentException("values/mask length must be SIZE*SIZE");
+        if (values == null || mask == null)
+            throw new NullPointerException("values/mask");
+        final int N = SIZE * SIZE;
+        if (values.length() != N || mask.length() != N)
+            throw new IllegalArgumentException("values/mask length must be SIZE*SIZE");
 
-    int[][] start = new int[SIZE][SIZE];
-    boolean[][] givens = new boolean[SIZE][SIZE];
+        int[][] start = new int[SIZE][SIZE];
+        boolean[][] givens = new boolean[SIZE][SIZE];
 
-    for (int i = 0; i < N; i++) {
-        int r = i / SIZE, c = i % SIZE;
-        char ch = values.charAt(i);
-        start[r][c] = (ch == '0' || ch == '.') ? 0 : (ch - '0');
-        givens[r][c] = (mask.charAt(i) == '1');
+        for (int i = 0; i < N; i++) {
+            int r = i / SIZE, c = i % SIZE;
+            char ch = values.charAt(i);
+            start[r][c] = (ch == '0' || ch == '.') ? 0 : (ch - '0');
+            givens[r][c] = (mask.charAt(i) == '1');
+        }
+        return new Board(start, givens);
     }
-    return new Board(start, givens);
-}
 }
