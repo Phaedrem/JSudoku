@@ -36,16 +36,6 @@ public class BoardPanel extends JPanel {
 
     private int compIndex(int r, int c) { return r * Board.SIZE + c; }
 
-    public void setSelectedCell(int r, int c){ 
-        if (selRow >= 0){
-            cells.get(compIndex(selRow, selCol)).setSelected(false); // Clear old highlight
-        }
-        selRow = r;
-        selCol = c;
-        updateHighlights();
-        requestFocusInWindow();
-    }
-
     private void updateHighlights() {
         for (CellView cv : cells){
             cv.setPeerHighlighted(false);
@@ -158,25 +148,6 @@ public class BoardPanel extends JPanel {
         setSelectedCell(0,0);
     }
 
-    public BoardView getView(){
-        return this.board;
-    }
-
-    public void setTheme(ColorTheme t){
-        this.theme = t;
-        for (CellView cv : cells){
-            cv.setTheme(t);
-            cv.setBackground(t.cellBackground());
-            cv.setGiven(board.isGiven(cv.row(), cv.col()));
-        }
-        repaint();
-    }
-
-    public void setPencilMode(boolean on){
-        this.pencilMode = on;
-        repaint();
-    }
-
     private void clearPeerPencils(int selRow, int selCol, int val){
         if (val > 0 && val <= Board.SIZE) {
             for (int c = 0; c < Board.SIZE; c++) {
@@ -196,5 +167,34 @@ public class BoardPanel extends JPanel {
                 }
             }
         }
+    }
+
+    public BoardView getView(){
+        return this.board;
+    }
+
+    public void setTheme(ColorTheme t){
+        this.theme = t;
+        for (CellView cv : cells){
+            cv.setTheme(t);
+            cv.setBackground(t.cellBackground());
+            cv.setGiven(board.isGiven(cv.row(), cv.col()));
+        }
+        repaint();
+    }
+
+    public void setPencilMode(boolean on){
+        this.pencilMode = on;
+        repaint();
+    }
+
+    public void setSelectedCell(int r, int c){ 
+        if (selRow >= 0){
+            cells.get(compIndex(selRow, selCol)).setSelected(false); // Clear old highlight
+        }
+        selRow = r;
+        selCol = c;
+        updateHighlights();
+        requestFocusInWindow();
     }
 }

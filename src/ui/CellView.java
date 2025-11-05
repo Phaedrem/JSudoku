@@ -41,6 +41,11 @@ public class CellView extends JPanel{
     public int row() {return row; }
     public int col() {return col; }
 
+    private void clearPencils() {
+        Arrays.fill(pencil, false);
+        repaint();
+    }
+
     private void applyBoxBoarders() {
         int top = 1, left = 1, bottom = 1, right = 1;
 
@@ -82,6 +87,28 @@ public class CellView extends JPanel{
     public void setSameValueHighlight(boolean on){
         sameValue = on;
         repaint();
+    }
+
+    public void setTheme(ColorTheme t){
+        this.theme = t;
+        setForeground(theme.gridLine());
+        repaint();
+    }
+
+    public void togglePencil(int d) {
+        if (digit == 0 && d > 0 && d <= 9){
+            pencil[d-1] = !pencil[d-1];
+            repaint();
+        }
+    }
+
+    public void removePencil(int n) {
+        if (n > 0 && n <= Board.SIZE){
+            if(pencil[n-1]){
+                pencil[n-1] = false;
+                repaint();
+            }
+        }
     }
 
     @Override
@@ -131,33 +158,6 @@ public class CellView extends JPanel{
             }
         } finally {
             g2.dispose();
-        }
-    }
-
-    public void setTheme(ColorTheme t){
-        this.theme = t;
-        setForeground(theme.gridLine());
-        repaint();
-    }
-
-    public void togglePencil(int d) {
-        if (digit == 0 && d > 0 && d <= 9){
-            pencil[d-1] = !pencil[d-1];
-            repaint();
-        }
-    }
-
-    private void clearPencils() {
-        Arrays.fill(pencil, false);
-        repaint();
-    }
-
-    public void removePencil(int n) {
-        if (n > 0 && n <= Board.SIZE){
-            if(pencil[n-1]){
-                pencil[n-1] = false;
-                repaint();
-            }
         }
     }
 }
