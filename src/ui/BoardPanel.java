@@ -14,6 +14,7 @@ public class BoardPanel extends JPanel {
     private final List<CellView> cells = new ArrayList<>(Board.SIZE); // Keeps track of cell values
     private int selRow = -1, selCol = -1;
     private ColorTheme theme = ColorTheme.Preset.CLASSIC.theme();
+    private boolean pencilMode = false;
 
     public BoardPanel(BoardView board) {
         this.board = board;
@@ -108,14 +109,20 @@ public class BoardPanel extends JPanel {
 
     private void placeDigit(int val) {
         if (selRow >= 0){
-            boolean ok = board.trySet(selRow, selCol, val);
-            if(ok){
-                CellView cv = cells.get(compIndex(selRow, selCol));
-                cv.setDigit(board.get(selRow, selCol));
-                cv.repaint();
-                if(board.isSolved()){
-                   JOptionPane.showMessageDialog(this,"Puzzle Complete!");
-            }
+            CellView cv = cells.get(compIndex(selRow, selCol));
+            if (pencilMode){
+                if (board.get(selRow, selCol) == 0){
+                    cv.togglePencil(val);
+                }
+            } else {
+                boolean ok = board.trySet(selRow, selCol, val);
+                if(ok){
+                    cv.setDigit(board.get(selRow, selCol));
+                    cv.repaint();
+                    if(board.isSolved()){
+                    JOptionPane.showMessageDialog(this,"Puzzle Complete!");
+                    }
+                }
             }
         }
     }
@@ -161,6 +168,11 @@ public class BoardPanel extends JPanel {
             cv.setBackground(t.cellBackground());
             cv.setGiven(board.isGiven(cv.row(), cv.col()));
         }
+        repaint();
+    }
+
+    public void setPencilMode(boolean on){
+        this.pencilMode = on;
         repaint();
     }
 
