@@ -7,8 +7,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import sudoku.Board;
-import sudoku.BoardFacade;
-import sudoku.BoardView;
 
 /**
  * Top-level application window for JSudoku.
@@ -22,7 +20,7 @@ public class SudokuFrame extends JFrame {
 
     /**
      * Creates a frame showing the given Sudoku board.
-     * @param board initial {@link sudoku.BoardView} to display
+     * @param board initial {@link ui.BoardView} to display
      */
     public SudokuFrame(BoardView board) {
         super("JSudoku");
@@ -100,7 +98,7 @@ public class SudokuFrame extends JFrame {
     /**
      * Starts a new puzzle from the selected difficulty menu item by looking up
      * a seed string in {@code sudoku.Seeds.BY_NAME}, constructing a {@link sudoku.Board},
-     * wrapping it in a {@link sudoku.BoardFacade}, and installing it in the UI.
+     * wrapping it in a {@link ui.BoardFacade}, and installing it in the UI.
      * @param e action event from a difficulty menu item
      */
     private void startNewPuzzle(ActionEvent e){
@@ -132,7 +130,7 @@ public class SudokuFrame extends JFrame {
     /**
      * Replaces the center {@link BoardPanel} with a new one for the provided view.
      * Ensures proper removal/addition in the content pane and triggers layout/paint.
-     * @param view the {@link sudoku.BoardView} to display
+     * @param view the {@link ui.BoardView} to display
      */
     private void setBoardView(BoardView view){
         if (boardPanel != null){
@@ -192,7 +190,7 @@ public class SudokuFrame extends JFrame {
     /**
      * Opens a file chooser and reads a saved board from disk.
      * Accepts files saved with or without a given-mask line; validates lengths,
-     * reconstructs a {@link sudoku.Board} accordingly, wraps in a {@link sudoku.BoardFacade},
+     * reconstructs a {@link sudoku.Board} accordingly, wraps in a {@link ui.BoardFacade},
      * and replaces the current view. Shows an error dialog on failure.
      */
     private void loadGame(){
@@ -215,7 +213,7 @@ public class SudokuFrame extends JFrame {
             sudoku.Board core = (mask != null && mask.length() == values.length())
                 ? Board.fromString(values, mask)
                 : Board.fromString(values);
-            sudoku.BoardView view = new sudoku.BoardFacade(core);
+            ui.BoardView view = new ui.BoardFacade(core);
             
             setBoardView(view);
 

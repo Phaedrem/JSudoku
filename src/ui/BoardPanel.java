@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import sudoku.Board;
-import sudoku.BoardView;
 
 /**
  * Main board component that lays out a SIZE×SIZE grid of {@link CellView}s,
@@ -22,7 +21,7 @@ public class BoardPanel extends JPanel {
     private boolean pencilMode = false;
 
     /**
-     * Constructs a panel for the supplied {@link sudoku.BoardView} model.
+     * Constructs a panel for the supplied {@link ui.BoardView} model.
      * Populates the grid with {@link CellView} instances, applying the current theme,
      * initial values, and given state.
      * @param board the backing view model
@@ -213,7 +212,7 @@ public class BoardPanel extends JPanel {
 
      /**
      * Returns the view model currently displayed by this panel.
-     * @return the {@link sudoku.BoardView}
+     * @return the {@link ui.BoardView}
      */
     public BoardView getView(){
         return this.board;

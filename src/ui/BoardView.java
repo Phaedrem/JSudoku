@@ -1,4 +1,6 @@
-package sudoku;
+package ui;
+
+import sudoku.Board;
 
 /**
  * Read-only interface exposing the state of a Sudoku board.

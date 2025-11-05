@@ -1,4 +1,6 @@
-package sudoku;
+package ui;
+
+import sudoku.Board;
 
 /**
  * Facade that bridges the mutable {@link Board} model with the {@link BoardView} interface.
