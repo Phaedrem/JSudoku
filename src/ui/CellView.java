@@ -151,4 +151,13 @@ public class CellView extends JPanel{
         Arrays.fill(pencil, false);
         repaint();
     }
+
+    public void removePencil(int n) {
+        if (n > 0 && n <= Board.SIZE){
+            if(pencil[n-1]){
+                pencil[n-1] = false;
+                repaint();
+            }
+        }
+    }
 }
