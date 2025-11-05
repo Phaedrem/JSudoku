@@ -4,6 +4,9 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
+import java.util.Arrays;
+
+import sudoku.Board;
 
 public class CellView extends JPanel{
     private final int row, col;
@@ -11,7 +14,9 @@ public class CellView extends JPanel{
     private boolean selected = false;
     private boolean peer = false;
     private boolean sameValue = false;
+    private final boolean[] pencil = new boolean[Board.SIZE];
     private ColorTheme theme = ColorTheme.Preset.CLASSIC.theme();
+    private int digit = 0;
 
     public CellView(int row, int col) {
         this.row = row;
@@ -49,6 +54,8 @@ public class CellView extends JPanel{
     }
 
     public void setDigit(int value) {
+        clearPencils();
+        digit = value;
         label.setText(value == 0 ? "" : Integer.toString(value));
     }
 
@@ -94,6 +101,34 @@ public class CellView extends JPanel{
                 g2.setColor(theme.selectedFill());
                 g2.fillRect(0, 0, getWidth(), getHeight());
             }
+            if (digit == 0) {
+                Graphics2D g3 = (Graphics2D) g2.create();
+                try {
+                    g3.setColor(theme.textPencil());
+                    int w = getWidth(), h = getHeight();
+                    int subW = w / 3, subH = h / 3;
+                    Font base = getFont();
+                    Font small = base.deriveFont(base.getSize2D());
+                    g3.setFont(small);
+                    FontMetrics fm = g3.getFontMetrics();
+
+                    for (int n = 1; n <= Board.SIZE; n++) {
+                        if (pencil[n-1]){
+                            int r = (n - 1) / 3;
+                            int c = (n - 1) % 3;
+                            int cx = c * subW + subW / 2;
+                            int cy = r * subH + subH / 2;
+                            String s = Integer.toString(n);
+                            int tw = fm.stringWidth(s), th = fm.getAscent();
+                            int x = cx - (tw / 2);
+                            int y = cy + (th / 2);
+                            g3.drawString(s, x, y);
+                        }
+                    }
+                } finally {
+                    g3.dispose();
+                }
+            }
         } finally {
             g2.dispose();
         }
@@ -102,6 +137,18 @@ public class CellView extends JPanel{
     public void setTheme(ColorTheme t){
         this.theme = t;
         setForeground(theme.gridLine());
+        repaint();
+    }
+
+    public void togglePencil(int d) {
+        if (digit == 0 && d > 0 && d <= 9){
+            pencil[d-1] = !pencil[d-1];
+            repaint();
+        }
+    }
+
+    private void clearPencils() {
+        Arrays.fill(pencil, false);
         repaint();
     }
 }
