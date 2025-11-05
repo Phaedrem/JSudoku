@@ -68,6 +68,7 @@ public class SudokuFrame extends JFrame {
         pencilItem.setState(pencilMode);
         pencilItem.addActionListener(e -> {
             pencilMode = pencilItem.getState();
+            if (boardPanel != null) boardPanel.setPencilMode(pencilMode);
         });
         settingsMenu.add(colors);
         bar.add(filMenu);
