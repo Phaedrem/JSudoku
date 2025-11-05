@@ -118,6 +118,7 @@ public class BoardPanel extends JPanel {
                 boolean ok = board.trySet(selRow, selCol, val);
                 if(ok){
                     cv.setDigit(board.get(selRow, selCol));
+                    clearPeerPencils(selRow, selCol, val);
                     cv.repaint();
                     if(board.isSolved()){
                     JOptionPane.showMessageDialog(this,"Puzzle Complete!");
@@ -176,4 +177,24 @@ public class BoardPanel extends JPanel {
         repaint();
     }
 
+    private void clearPeerPencils(int selRow, int selCol, int val){
+        if (val > 0 && val <= Board.SIZE) {
+            for (int c = 0; c < Board.SIZE; c++) {
+                if (c != selCol && board.get(selRow, c) == 0) {
+                    cells.get(compIndex(selRow, c)).removePencil(val);
+                } else if (c != selRow && board.get(c, selCol) == 0) {
+                    cells.get(compIndex(c, selCol)).removePencil(val);
+                }
+            }
+            int box = (int) Math.sqrt(Board.SIZE);
+            int r0 = (selRow / box) * box, c0 = (selCol / box) * box;
+            for (int r = r0; r < r0 + box; r++) {
+                for (int c = c0; c < c0 + box; c++) {
+                    if (r != selRow && c != selCol && board.get(r, c) == 0) {
+                        cells.get(compIndex(r, c)).removePencil(val);
+                    }
+                }
+            }
+        }
+    }
 }
