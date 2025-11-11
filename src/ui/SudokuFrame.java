@@ -71,6 +71,10 @@ public class SudokuFrame extends JFrame {
         filMenu.addSeparator();
         filMenu.add(exitItem);
 
+        JMenu editMenu = new JMenu("Edit");
+        JMenuItem undoItem = new JMenuItem("Undo");
+        editMenu.add(undoItem);
+
         JMenu settingsMenu = new JMenu("Settings");
         JMenu colors = new JMenu("Colors");
         for (ui.ColorTheme.Preset p : ui.ColorTheme.Preset.values()){
@@ -89,6 +93,7 @@ public class SudokuFrame extends JFrame {
         });
         settingsMenu.add(colors);
         bar.add(filMenu);
+        bar.add(editMenu);
         bar.add(settingsMenu);
         bar.add(pencilItem);
 
