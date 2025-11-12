@@ -199,7 +199,7 @@ public class BoardPanel extends JPanel {
      * @param val the numeric value input by the player (1–9)
      */
     private void placeDigit(int val) {
-        if (selRow >= 0 && val > 0 && val <= Board.SIZE){
+        if (selRow >= 0 && val >= 0 && val <= Board.SIZE){
             CellView cv = cells.get(compIndex(selRow, selCol));
             if (pencilMode){
                 if (board.get(selRow, selCol) == 0){
@@ -210,13 +210,21 @@ public class BoardPanel extends JPanel {
                 }
             } else {
                 int oldVal = board.get(selRow, selCol);
-                boolean ok = board.trySet(selRow, selCol, val);
+                boolean ok;
+                if(val == 0){
+                    ok = board.tryClear(selRow, selCol);
+                    System.out.println("Val was 0");
+                } else {
+                    ok = board.trySet(selRow, selCol, val);
+                }
                 if(ok){
                     boolean[] cellPencilsBefore = copyPencils(cv);
                     cv.setDigit(board.get(selRow, selCol));
-                    cv.clearPencils();
-
-                    List<PencilRestore> peersRemoved = removePeerPencilsAndRecord(selRow, selCol, val);
+                    List<PencilRestore> peersRemoved = null;
+                    if(val != 0){
+                        cv.clearPencils();
+                        peersRemoved = removePeerPencilsAndRecord(selRow, selCol, val);
+                    }
 
                     undoStack.push(new UndoAction(
                         UndoAction.Type.PLACE_VALUE,
@@ -398,7 +406,13 @@ public class BoardPanel extends JPanel {
             UndoAction a = undoStack.pop();
             switch (a.type){
                 case PLACE_VALUE -> {
-                    if (board.trySet(a.r, a.c, a.oldVal)) {
+                    boolean ok;
+                    if (a.oldVal == 0){
+                        ok = board.tryClear(a.r, a.c);
+                    } else {
+                        ok = board.trySet(a.r, a.c, a.oldVal);
+                    }
+                    if (ok) {
                         CellView cv = cells.get(compIndex(a.r, a.c));
                         cv.setDigit(a.oldVal);
                         if (a.cellPencilsBefore != null){
