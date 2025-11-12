@@ -57,7 +57,7 @@ public class CellView extends JPanel{
      * <p>This is called when a definitive digit is set via {@link #setDigit(int)} 
      * or when the board is reset, ensuring that only valid markings remain.</p>
      */
-    private void clearPencils() {
+    public void clearPencils() {
         Arrays.fill(pencil, false);
         repaint();
     }
@@ -86,6 +86,21 @@ public class CellView extends JPanel{
     public int row() {return row; }
     /** @return this cell's column index */
     public int col() {return col; }
+
+    public boolean hasPencil(int d){
+        boolean success = false;
+        if (d > 0 && d <= Board.SIZE){
+            success = pencil[d-1];
+        }
+        return success; 
+    }
+
+    public void addPencil(int d){
+        if(d > 0 && d <= Board.SIZE && !pencil[d-1]){
+            pencil[d-1] = true;
+            repaint();
+        }
+    }
 
     /**
      * Sets the displayed digit (0 clears the cell). Clears any pencil marks
