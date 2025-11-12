@@ -224,6 +224,10 @@ public class CellView extends JPanel{
                 g2.setColor(theme.valueFill());
                 g2.fillRect(0, 0, getWidth(), getHeight());
             }
+            if(peer && sameValue){
+                g2.setColor(theme.incorrectFill());
+                g2.fillRect(0, 0, getWidth(), getHeight());
+            }
             if(selected){
                 g2.setColor(theme.selectedFill());
                 g2.fillRect(0, 0, getWidth(), getHeight());
