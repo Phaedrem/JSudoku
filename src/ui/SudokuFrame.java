@@ -41,13 +41,36 @@ public class SudokuFrame extends JFrame {
     }
 
     /**
-     * Builds the application menu bar.
+     * Builds and returns the menu bar for the Sudoku application.
+     * <p>
+     * The menu bar contains the following menus:
      * <ul>
-     *   <li><b>File → New Game</b>: choose difficulty; starts a new board from {@code Seeds}.</li>
-     *   <li><b>File → Save/Load</b>: write/read current grid and given-mask.</li>
-     *   <li><b>Settings → Colors</b>: switch active {@link ui.ColorTheme} preset at runtime.</li>
+     *   <li><b>File</b> — provides core game management options:
+     *       <ul>
+     *         <li><b>New Game</b>: lets the user start a new puzzle at a selected difficulty,
+     *             prompting to save the current game before replacement.</li>
+     *         <li><b>Load Game</b>: opens a previously saved puzzle state from disk.</li>
+     *         <li><b>Save Game</b>: saves the current board state to disk.</li>
+     *         <li><b>Exit</b>: closes the application, prompting to save progress if unsaved changes exist.</li>
+     *       </ul></li>
+     *   <li><b>Edit</b> — provides gameplay editing shortcuts:
+     *       <ul>
+     *         <li><b>Undo</b>: reverses the most recent player action (either a final number placement or
+     *             a pencil toggle). This is bound to the system shortcut
+     *             <kbd>Ctrl + Z</kbd> (Windows/Linux) or <kbd>Cmd + Z</kbd> (macOS).</li>
+     *       </ul></li>
+     *   <li><b>Settings</b> — provides display and input configuration:
+     *       <ul>
+     *         <li><b>Pencil Mode</b>: a checkable menu item that toggles whether
+     *             number keys add pencil marks or final values. The menu state stays
+     *             synchronized with the game panel, and the <kbd>Tab</kbd> key also toggles this mode.</li>
+     *       </ul></li>
      * </ul>
-     * @return a configured {@link JMenuBar}
+     * <p>
+     * Each menu item is connected to its corresponding handler in {@link BoardPanel}
+     * or {@link SudokuFrame}, ensuring consistent state across the UI and game logic.
+     *
+     * @return a fully initialized {@link JMenuBar} for the Sudoku window
      */
     private JMenuBar createMenuBar(){
         JMenuBar bar = new JMenuBar();
