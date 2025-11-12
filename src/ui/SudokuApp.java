@@ -14,6 +14,7 @@ public class SudokuApp {
     public static void main(String[] args){
         SwingUtilities.invokeLater(() -> {
             Board start = Board.fromString(Seeds.EASY);
+            Solver.solveBoard(start);
             BoardFacade view = new BoardFacade(start);
             SudokuFrame frame = new SudokuFrame(view);
             frame.setVisible(true);

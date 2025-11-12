@@ -8,6 +8,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.KeyEvent;
 
 import sudoku.Board;
+import sudoku.Solver;
 
 /**
  * Top-level application window for JSudoku.
@@ -159,6 +160,7 @@ public class SudokuFrame extends JFrame {
 
         String seed = sudoku.Seeds.BY_NAME.get(label);
         Board core = Board.fromString(seed);
+        Solver.solveBoard(core);
         BoardView view = new BoardFacade(core);
         setBoardView(view);
     }
@@ -249,8 +251,9 @@ public class SudokuFrame extends JFrame {
             sudoku.Board core = (mask != null && mask.length() == values.length())
                 ? Board.fromString(values, mask)
                 : Board.fromString(values);
-            ui.BoardView view = new ui.BoardFacade(core);
             
+            Solver.solveBoard(core);
+            ui.BoardView view = new ui.BoardFacade(core);
             setBoardView(view);
 
         } catch (Exception ex) {
