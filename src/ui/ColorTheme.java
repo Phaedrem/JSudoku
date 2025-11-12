@@ -19,10 +19,12 @@ public record ColorTheme(
     Color cellBackground,
     Color textGiven,
     Color textEditable,
+    Color incorrectText,
     Color textPencil,
     Color selectedFill,
     Color peerFill,
     Color valueFill,
+    Color incorrectFill,
     Color gridLine
 ) {
     /**
@@ -35,30 +37,36 @@ public record ColorTheme(
             new Color(255,255,255),  // cellBackground
             new Color(52,72,97),     // textGiven
             new Color(50,90,175),    // textEditable
-            new Color(110,124,140),    // textPencil
+            new Color(229,92,108),   // incorrectText
+            new Color(110,124,140),  // textPencil
             new Color(187,222,251),  // selectedFill
             new Color(226,235,243),  // peerFill
-            new Color(195,215,234),  // valFill
-            new Color(52,72,97)   // gridLine
+            new Color(195,215,234),  // valueFill
+            new Color(247,207,214),   // incorrectFill
+            new Color(52,72,97)      // gridLine
         )),
         MIDNIGHT(new ColorTheme(
             new Color(33,37,43),
             new Color(210,215,220),
             new Color(140,190,255),
+            new Color(229,92,108),
             new Color(50,90,175),
             new Color(70,75,90),
             new Color(50,55,70),
             new Color(100,150,255),
+            new Color(229,92,108),
             new Color(90,95,105)
         )),
         HIGH_CONTRAST(new ColorTheme(
             Color.WHITE,
             Color.BLACK,
             Color.BLACK,
+            new Color(229,92,108),
             Color.BLACK,
             Color.YELLOW,
             new Color(210,210,210),
             new Color(255,128,0),
+            Color.RED,
             Color.BLACK
         ));
 
