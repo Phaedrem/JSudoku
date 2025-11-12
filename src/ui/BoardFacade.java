@@ -59,12 +59,7 @@ public class BoardFacade implements BoardView {
      * @return {@code true} if the cell was updated; {@code false} otherwise
      */
     @Override public boolean trySet(int r, int c, int val) {
-        boolean success = false;
-        if (!isGiven(r, c)) {
-            board.cell(r, c).setValue(val);
-            success = true;
-        }
-        return success;
+        return board.trySet(r, c, val);
     }
 
     /**
@@ -75,11 +70,6 @@ public class BoardFacade implements BoardView {
      */
     @Override
     public boolean isSolved(){
-        for(int r = 0; r < Board.SIZE; r++){
-            for(int c = 0; c < Board.SIZE; c++){
-                if(get(r, c) == 0) return false;
-            }
-        }
-        return true;
+        return board.isSolved();
     }
 }
