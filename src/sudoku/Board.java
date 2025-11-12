@@ -44,22 +44,22 @@ public class Board {
     }
 
     private Board(int[][] start, boolean[][] givens) {
-    if (start == null) throw new NullPointerException("Passed 2D array is null");
-    if (start.length != SIZE) throw new IllegalArgumentException("Passed array must have " + SIZE + " rows");
-    for (int r = 0; r < SIZE; r++) {
-        int[] row = start[r];
-        if (row == null || row.length != SIZE) {
-            throw new IllegalArgumentException("Row " + r + " must have " + SIZE + " columns");
-        }
-        for (int c = 0; c < SIZE; c++) {
-            int v = row[c];
-            if (v < 0 || v > SIZE) {
-                throw new IllegalArgumentException("Value out of range at (" + r + "," + c+ ")");
+        if (start == null) throw new NullPointerException("Passed 2D array is null");
+        if (start.length != SIZE) throw new IllegalArgumentException("Passed array must have " + SIZE + " rows");
+        for (int r = 0; r < SIZE; r++) {
+            int[] row = start[r];
+            if (row == null || row.length != SIZE) {
+                throw new IllegalArgumentException("Row " + r + " must have " + SIZE + " columns");
             }
-            grid[r][c] = new Cell(v, givens[r][c]);
+            for (int c = 0; c < SIZE; c++) {
+                int v = row[c];
+                if (v < 0 || v > SIZE) {
+                    throw new IllegalArgumentException("Value out of range at (" + r + "," + c+ ")");
+                }
+                grid[r][c] = new Cell(v, givens[r][c]);
+            }
         }
     }
-}
 
     /**
      * Get the {@link Cell} at (r,c).
