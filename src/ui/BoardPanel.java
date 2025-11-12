@@ -22,6 +22,13 @@ public class BoardPanel extends JPanel {
     private ColorTheme theme = ColorTheme.Preset.CLASSIC.theme();
     private boolean pencilMode = false;
 
+     /**
+     * Stores a single peer pencil mark that was removed as a result of placing a final value.
+     * <p>
+     * When a number is entered into a cell, any matching pencil marks in the same row,
+     * column, or box are cleared. Each {@code PencilRestore} represents one of those cleared
+     * pencil marks, so it can be reinstated if the move is undone.
+     */
     private static final class PencilRestore {
         final int r, c, digit;
         PencilRestore(int r, int c, int d){
@@ -31,6 +38,15 @@ public class BoardPanel extends JPanel {
         }
     }
 
+    /**
+     * Represents a reversible game action stored on the undo stack.
+     * <p>
+     * Each {@code UndoAction} captures the state needed to reverse a player move.
+     * This includes both final number placements and pencil mark toggles. When a
+     * placement is undone, the previous cell value, its pencil marks, and all affected
+     * peer pencil marks are restored. When a pencil mark toggle is undone, the
+     * previous mark state (on/off) is restored.
+     */
     private static final class UndoAction {
         enum Type { PLACE_VALUE, TOGGLE_PENCIL }
         final Type type;
@@ -162,14 +178,28 @@ public class BoardPanel extends JPanel {
         bindArrow("DOWN", 1, 0);
     }
     
-    /**
-     * Handles a numeric or clear action for the currently selected cell.
-     * If pencil mode is enabled and the cell is empty, toggles a pencil mark.
-     * Otherwise attempts a model update; on success updates the view,
-     * shows a solved dialog if complete, and leaves highlighting to the caller.
+     /**
+     * Handles player input when entering a digit into the selected cell.
+     * <p>
+     * This method performs two main actions depending on the current mode:
+     * <ul>
+     *   <li><b>Pencil mode ON:</b> Toggles the given digit as a small pencil mark in the selected cell.
+     *       The previous on/off state of the pencil mark is recorded for undo.</li>
+     *   <li><b>Pencil mode OFF:</b> Attempts to place the given digit as a final value in the cell
+     *       through {@link BoardView#trySet(int, int, int)}. If successful, the cell’s previous
+     *       pencils are cleared, matching peer pencil marks (same row, column, and box) are removed,
+     *       and the entire change is recorded for undo.</li>
+     * </ul>
+     * The undo system stores all information necessary to restore both the cell and any
+     * affected peers to their prior state.
+     * <p>
+     * This method ignores invalid entries (e.g. digits outside 1–9, attempts to modify
+     * given cells, or actions when no cell is selected).
+     *
+     * @param val the numeric value input by the player (1–9)
      */
     private void placeDigit(int val) {
-        if (selRow >= 0){
+        if (selRow >= 0 && val > 0 && val <= Board.SIZE){
             CellView cv = cells.get(compIndex(selRow, selCol));
             if (pencilMode){
                 if (board.get(selRow, selCol) == 0){
@@ -292,14 +322,40 @@ public class BoardPanel extends JPanel {
         requestFocusInWindow();
     }
 
+    /**
+     * Stack of reversible player actions.
+     * <p>
+     * Each element is an {@link UndoAction} describing either a final number placement
+     * or a pencil toggle. The most recent action is popped when performing an undo,
+     * allowing multiple sequential undos.
+     */
     private final Deque<UndoAction> undoStack = new ArrayDeque<>();
 
+    /**
+     * Creates a snapshot of all pencil marks currently visible in a cell.
+     * <p>
+     * Used primarily by the undo system to capture a cell's pencil state before it is changed.
+     * Each index (0–8) corresponds to digits 1–9. A value of {@code true} means the
+     * pencil mark for that digit is present.
+     *
+     * @param cv the {@link CellView} to copy pencil data from
+     * @return a new boolean array of length SIZE representing all pencil marks in the cell
+     */
     private static boolean[] copyPencils(CellView cv){
         boolean[] out = new boolean[Board.SIZE];
-        for (int d = 1; d <= 9; d++) out[d-1] = cv.hasPencil(d);
+        for (int d = 1; d <= Board.SIZE; d++) out[d-1] = cv.hasPencil(d);
         return out;
     }
 
+    /**
+     * Removes pencil marks matching the given value from all peers (same row, column, and box)
+     * of the selected cell, and records which peers were changed.
+     *
+     * @param selRow the row index of the cell where the final number was placed
+     * @param selCol the column index of the cell where the final number was placed
+     * @param val    the value that was entered
+     * @return a list of {@link PencilRestore} entries for each peer whose pencil mark was cleared
+     */
     private List<PencilRestore> removePeerPencilsAndRecord(int selRow, int selCol, int val){
         List<PencilRestore> removed = new ArrayList<>();
         if (val > 0 && val <= Board.SIZE) {
@@ -328,6 +384,15 @@ public class BoardPanel extends JPanel {
         return removed;
     }
 
+    /**
+     * Reverts the most recent player action recorded on the undo stack.
+     * <p>
+     * For a final number placement, this method clears the number, restores the cell's
+     * prior pencil marks, and re-adds any peer pencil marks that were automatically removed.
+     * For a pencil toggle, the specific mark is restored to its previous state.
+     * <p>
+     * If no actions are available to undo, this method does nothing.
+     */
     public void undoLast(){
         if (!undoStack.isEmpty()){
             UndoAction a = undoStack.pop();
@@ -338,7 +403,7 @@ public class BoardPanel extends JPanel {
                         cv.setDigit(a.oldVal);
                         if (a.cellPencilsBefore != null){
                             cv.clearPencils();
-                            for (int d=1; d<=9; d++){
+                            for (int d=1; d <= Board.SIZE; d++){
                                 if (a.cellPencilsBefore[d-1]) cv.addPencil(d);
                             }
                         }
