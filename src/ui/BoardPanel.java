@@ -5,6 +5,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Deque;
+import java.util.ArrayDeque;
 
 import sudoku.Board;
 
@@ -19,6 +21,47 @@ public class BoardPanel extends JPanel {
     private int selRow = -1, selCol = -1;
     private ColorTheme theme = ColorTheme.Preset.CLASSIC.theme();
     private boolean pencilMode = false;
+
+    private static final class PencilRestore {
+        final int r, c, digit;
+        PencilRestore(int r, int c, int d){
+            this.r = r;
+            this.c=c;
+            this.digit=d;
+        }
+    }
+
+    private static final class UndoAction {
+        enum Type { PLACE_VALUE, TOGGLE_PENCIL }
+        final Type type;
+        final int r, c;
+
+        // For PLACE_VALUE
+        final int oldVal;
+        final boolean[] cellPencilsBefore;
+        final List<PencilRestore> peerPencilsRemoved;
+
+        // For TOGGLE_PENCIL
+        final int digit;
+        final boolean pencilWasOn;
+
+        UndoAction(Type t, int r, int c, int oldVal, int newVal,
+                boolean[] cellPencilsBefore,
+                List<PencilRestore> peers){
+            this.type = t; this.r = r; this.c = c;
+            this.oldVal = oldVal;
+            this.cellPencilsBefore = cellPencilsBefore;
+            this.peerPencilsRemoved = peers;
+            this.digit = 0; this.pencilWasOn = false;
+        }
+
+        UndoAction(Type t, int r, int c, int digit, boolean wasOn){
+            this.type = t; this.r = r; this.c = c;
+            this.digit = digit; this.pencilWasOn = wasOn;
+            this.oldVal = 0;
+            this.cellPencilsBefore = null; this.peerPencilsRemoved = null;
+        }
+    }
 
     /**
      * Constructs a panel for the supplied {@link ui.BoardView} model.
@@ -130,20 +173,36 @@ public class BoardPanel extends JPanel {
             CellView cv = cells.get(compIndex(selRow, selCol));
             if (pencilMode){
                 if (board.get(selRow, selCol) == 0){
+                    boolean wasOn = cv.hasPencil(val);
                     cv.togglePencil(val);
+                    undoStack.push(new UndoAction(UndoAction.Type.TOGGLE_PENCIL, selRow, selCol, val, wasOn));
+                    repaint();
                 }
             } else {
+                int oldVal = board.get(selRow, selCol);
                 boolean ok = board.trySet(selRow, selCol, val);
                 if(ok){
+                    boolean[] cellPencilsBefore = copyPencils(cv);
                     cv.setDigit(board.get(selRow, selCol));
-                    clearPeerPencils(selRow, selCol, val);
-                    cv.repaint();
+                    cv.clearPencils();
+
+                    List<PencilRestore> peersRemoved = removePeerPencilsAndRecord(selRow, selCol, val);
+
+                    undoStack.push(new UndoAction(
+                        UndoAction.Type.PLACE_VALUE,
+                        selRow, selCol,
+                        oldVal, val,
+                        cellPencilsBefore,
+                        peersRemoved
+                        ));
+
                     if(board.isSolved()){
-                    JOptionPane.showMessageDialog(this,"Puzzle Complete!");
+                        JOptionPane.showMessageDialog(this,"Puzzle Complete!");
                     }
                 }
             }
         }
+        updateHighlights();
     }
 
     /**
@@ -182,32 +241,6 @@ public class BoardPanel extends JPanel {
             }
         }
         setSelectedCell(0,0);
-    }
-
-    /**
-     * Clears pencil mark {@code val} from all peers of (selRow, selCol):
-     * same row, same column, and same box. Only affects empty cells.
-     */
-    private void clearPeerPencils(int selRow, int selCol, int val){
-        if (val > 0 && val <= Board.SIZE) {
-            for (int c = 0; c < Board.SIZE; c++) {
-                if (c != selCol && board.get(selRow, c) == 0) {
-                    cells.get(compIndex(selRow, c)).removePencil(val);
-                }
-                if (c != selRow && board.get(c, selCol) == 0) {
-                    cells.get(compIndex(c, selCol)).removePencil(val);
-                }
-            }
-            int box = (int) Math.sqrt(Board.SIZE);
-            int r0 = (selRow / box) * box, c0 = (selCol / box) * box;
-            for (int r = r0; r < r0 + box; r++) {
-                for (int c = c0; c < c0 + box; c++) {
-                    if (r != selRow && c != selCol && board.get(r, c) == 0) {
-                        cells.get(compIndex(r, c)).removePencil(val);
-                    }
-                }
-            }
-        }
     }
 
      /**
@@ -257,5 +290,78 @@ public class BoardPanel extends JPanel {
         selCol = c;
         updateHighlights();
         requestFocusInWindow();
+    }
+
+    private final Deque<UndoAction> undoStack = new ArrayDeque<>();
+
+    private static boolean[] copyPencils(CellView cv){
+        boolean[] out = new boolean[Board.SIZE];
+        for (int d = 1; d <= 9; d++) out[d-1] = cv.hasPencil(d);
+        return out;
+    }
+
+    private List<PencilRestore> removePeerPencilsAndRecord(int selRow, int selCol, int val){
+        List<PencilRestore> removed = new ArrayList<>();
+        if (val > 0 && val <= Board.SIZE) {
+            for (int c = 0; c < Board.SIZE; c++){
+                if (c != selCol && board.get(selRow, c) == 0){
+                    CellView cv = cells.get(compIndex(selRow, c));
+                    if (cv.hasPencil(val)) { cv.removePencil(val); removed.add(new PencilRestore(selRow, c, val)); }
+                }
+                if (c != selRow && board.get(c, selCol) == 0){
+                    CellView cv = cells.get(compIndex(c, selCol));
+                    if (cv.hasPencil(val)) { cv.removePencil(val); removed.add(new PencilRestore(c, selCol, val)); }
+                }
+            }
+            int r0 = (selRow / Board.BOX) * Board.BOX;
+            int c0 = (selCol / Board.BOX) * Board.BOX;
+            for (int r = r0; r < r0 + Board.BOX; r++){
+                for (int c = c0; c < c0 + Board.BOX; c++){
+                    if (r == selRow && c == selCol) continue;
+                    if (board.get(r, c) == 0){
+                        CellView cv = cells.get(compIndex(r, c));
+                        if (cv.hasPencil(val)) { cv.removePencil(val); removed.add(new PencilRestore(r, c, val)); }
+                    }
+                }
+            }
+        }
+        return removed;
+    }
+
+    public void undoLast(){
+        if (!undoStack.isEmpty()){
+            UndoAction a = undoStack.pop();
+            switch (a.type){
+                case PLACE_VALUE -> {
+                    if (board.trySet(a.r, a.c, a.oldVal)) {
+                        CellView cv = cells.get(compIndex(a.r, a.c));
+                        cv.setDigit(a.oldVal);
+                        if (a.cellPencilsBefore != null){
+                            cv.clearPencils();
+                            for (int d=1; d<=9; d++){
+                                if (a.cellPencilsBefore[d-1]) cv.addPencil(d);
+                            }
+                        }
+                        if (a.peerPencilsRemoved != null){
+                            for (PencilRestore pr : a.peerPencilsRemoved){
+                                if (board.get(pr.r, pr.c) == 0) {
+                                    cells.get(compIndex(pr.r, pr.c)).addPencil(pr.digit);
+                                }
+                            }
+                        }
+                    }
+                }
+                case TOGGLE_PENCIL -> {
+                    CellView cv = cells.get(compIndex(a.r, a.c));
+                    if (a.pencilWasOn) {
+                        if (!cv.hasPencil(a.digit)) cv.addPencil(a.digit);
+                    } else {
+                        if (cv.hasPencil(a.digit)) cv.removePencil(a.digit);
+                    }
+                }
+            }
+        }
+        updateHighlights();
+        repaint();
     }
 }

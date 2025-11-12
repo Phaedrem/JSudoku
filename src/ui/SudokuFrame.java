@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.KeyEvent;
 
 import sudoku.Board;
 
@@ -73,6 +74,13 @@ public class SudokuFrame extends JFrame {
 
         JMenu editMenu = new JMenu("Edit");
         JMenuItem undoItem = new JMenuItem("Undo");
+        undoItem.setAccelerator(KeyStroke.getKeyStroke(
+            KeyEvent.VK_Z,
+            Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()  // Cmd on macOS, Ctrl on Windows/Linux
+        ));
+        undoItem.addActionListener(e -> {
+            if (boardPanel != null) boardPanel.undoLast();
+        });
         editMenu.add(undoItem);
 
         JMenu settingsMenu = new JMenu("Settings");
