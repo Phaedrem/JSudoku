@@ -213,7 +213,6 @@ public class BoardPanel extends JPanel {
                 boolean ok;
                 if(val == 0){
                     ok = board.tryClear(selRow, selCol);
-                    System.out.println("Val was 0");
                 } else {
                     ok = board.trySet(selRow, selCol, val);
                 }
