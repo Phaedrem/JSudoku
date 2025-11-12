@@ -264,6 +264,18 @@ public class SudokuFrame extends JFrame {
             Solver.solveBoard(baseForSolve);
             ui.BoardView view = new ui.BoardFacade(core);
             setBoardView(view);
+            if(Solver.getSolvedBoardCopy() != null){
+                for (int r = 0; r < Board.SIZE; r++){
+                    for (int c = 0; c < Board.SIZE; c++){
+                        if(!view.isGiven(r, c)){
+                            int v = view.get(r, c);
+                            if (v != 0 && v != Solver.solvedValueAt(r, c)){
+                                boardPanel.setIncorrectAt(r, c, true);
+                            }
+                        }
+                    }
+                }
+            }
 
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Failed to load:\n" + ex.getMessage(),
