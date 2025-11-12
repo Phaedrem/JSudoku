@@ -72,4 +72,9 @@ public class BoardFacade implements BoardView {
     public boolean isSolved(){
         return board.isSolved();
     }
+
+    @Override
+    public boolean tryClear(int r, int c){
+        return board.tryClear(r, c);
+    }
 }

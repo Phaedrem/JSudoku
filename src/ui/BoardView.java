@@ -54,4 +54,6 @@ public interface BoardView {
      * @return whether the board is fully solved
      */
     boolean isSolved();
+
+    boolean tryClear(int r, int c);
 }
