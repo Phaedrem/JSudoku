@@ -248,11 +248,20 @@ public class SudokuFrame extends JFrame {
                 throw new IllegalArgumentException("Invalid save file format");
             }
 
-            sudoku.Board core = (mask != null && mask.length() == values.length())
+            Board core = (mask != null && mask.length() == values.length())
                 ? Board.fromString(values, mask)
                 : Board.fromString(values);
             
-            Solver.solveBoard(core);
+            Board baseForSolve = Board.fromString(values, mask);
+            for(int r = 0; r < Board.SIZE; r++){
+                for (int c = 0; c < Board.SIZE; c++){
+                    if(!baseForSolve.cell(r, c).isGiven()){
+                        baseForSolve.cell(r, c).setValue(0);
+                    }
+                }
+            }
+            
+            Solver.solveBoard(baseForSolve);
             ui.BoardView view = new ui.BoardFacade(core);
             setBoardView(view);
 
