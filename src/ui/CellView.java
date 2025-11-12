@@ -21,6 +21,7 @@ public class CellView extends JPanel{
     private boolean selected = false;
     private boolean peer = false;
     private boolean sameValue = false;
+    private boolean isIncorrect = false;
     private final boolean[] pencil = new boolean[Board.SIZE];
     private ColorTheme theme = ColorTheme.Preset.CLASSIC.theme();
     private int digit = 0;
@@ -258,5 +259,15 @@ public class CellView extends JPanel{
         } finally {
             g2.dispose();
         }
+    }
+
+    public void setIncorrect(boolean incorrect){
+        this.isIncorrect = incorrect;
+        if(!this.isIncorrect){
+            label.setForeground(theme.textEditable());
+        } else {
+            label.setForeground(theme.incorrectText());
+        }
+        repaint();
     }
 }
