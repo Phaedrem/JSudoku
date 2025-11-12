@@ -1,6 +1,7 @@
 package ui;
 
 import sudoku.Board;
+import sudoku.Solver;
 
 /**
  * Facade that bridges the mutable {@link Board} model with the {@link BoardView} interface.
@@ -76,5 +77,15 @@ public class BoardFacade implements BoardView {
     @Override
     public boolean tryClear(int r, int c){
         return board.tryClear(r, c);
+    }
+
+    @Override
+    public boolean hasUniqueSolution(){
+        return Solver.getSolvedBoardCopy() != null && Solver.getNumSolutions() == 1;
+    }
+
+    @Override
+    public int solutionAt(int r, int c){
+        return Solver.solvedValueAt(r,c);
     }
 }

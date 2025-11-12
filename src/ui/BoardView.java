@@ -56,4 +56,8 @@ public interface BoardView {
     boolean isSolved();
 
     boolean tryClear(int r, int c);
+
+    boolean hasUniqueSolution();
+
+    int solutionAt(int r, int c);
 }
