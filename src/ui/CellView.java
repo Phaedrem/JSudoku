@@ -87,6 +87,12 @@ public class CellView extends JPanel{
     /** @return this cell's column index */
     public int col() {return col; }
 
+    /**
+     * Checks whether the given pencil mark (1–9) is currently displayed in this cell.
+     *
+     * @param d the digit (1–9) to check
+     * @return {@code true} if the pencil mark for that digit is present, {@code false} otherwise
+     */
     public boolean hasPencil(int d){
         boolean success = false;
         if (d > 0 && d <= Board.SIZE){
@@ -95,6 +101,15 @@ public class CellView extends JPanel{
         return success; 
     }
 
+    /**
+     * Ensures that the pencil mark for the given digit (1–9) is visible in this cell.
+     * <p>
+     * Unlike {@link #togglePencil(int)}, this method never removes a mark — it only
+     * adds one if it is not already present. Used primarily for restoring marks
+     * when undoing a move.
+     *
+     * @param d the digit (1–9) whose pencil mark should be added
+     */
     public void addPencil(int d){
         if(d > 0 && d <= Board.SIZE && !pencil[d-1]){
             pencil[d-1] = true;
