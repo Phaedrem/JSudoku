@@ -457,4 +457,8 @@ public class BoardPanel extends JPanel {
         updateHighlights();
         repaint();
     }
+
+    public void setIncorrectAt(int r, int c, boolean incorrect){
+        cells.get(compIndex(r, c)).setIncorrect(incorrect);
+    }
 }
