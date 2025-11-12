@@ -88,4 +88,12 @@ public class BoardFacade implements BoardView {
     public int solutionAt(int r, int c){
         return Solver.solvedValueAt(r,c);
     }
+
+    @Override
+    public void setUnsafe(int r, int c, int val){
+        var cell = board.cell(r, c);
+        if (!cell.isGiven()){
+            cell.setValue(val);
+        }
+    }
 }

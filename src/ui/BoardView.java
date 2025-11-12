@@ -60,4 +60,6 @@ public interface BoardView {
     boolean hasUniqueSolution();
 
     int solutionAt(int r, int c);
+
+    void setUnsafe(int r, int c, int val);
 }
