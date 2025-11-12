@@ -214,7 +214,15 @@ public class BoardPanel extends JPanel {
                 if(val == 0){
                     ok = board.tryClear(selRow, selCol);
                 } else {
-                    ok = board.trySet(selRow, selCol, val);
+                    ok = board.solutionAt(selRow, selCol) == val;
+                    cv.setIncorrect(false);
+                    if(!ok){
+                        board.setUnsafe(selRow, selCol, val);
+                        ok = true;
+                        cv.setIncorrect(ok);
+                    } else {
+                        board.trySet(selRow, selCol, val);
+                    }
                 }
                 if(ok){
                     boolean[] cellPencilsBefore = copyPencils(cv);
@@ -231,7 +239,7 @@ public class BoardPanel extends JPanel {
                         oldVal, val,
                         cellPencilsBefore,
                         peersRemoved
-                        ));
+                    ));
 
                     if(board.isSolved()){
                         JOptionPane.showMessageDialog(this,"Puzzle Complete!");
@@ -403,16 +411,24 @@ public class BoardPanel extends JPanel {
     public void undoLast(){
         if (!undoStack.isEmpty()){
             UndoAction a = undoStack.pop();
+            CellView cv = cells.get(compIndex(a.r, a.c));
             switch (a.type){
                 case PLACE_VALUE -> {
                     boolean ok;
                     if (a.oldVal == 0){
                         ok = board.tryClear(a.r, a.c);
                     } else {
-                        ok = board.trySet(a.r, a.c, a.oldVal);
+                        ok = board.solutionAt(a.r, a.c) == a.oldVal;
+                        cv.setIncorrect(false);
+                        if(!ok){
+                            board.setUnsafe(a.r, a.c, a.oldVal);
+                            ok = true;
+                            cv.setIncorrect(true);
+                        } else {
+                            board.trySet(a.r, a.c, a.oldVal);
+                        }
                     }
                     if (ok) {
-                        CellView cv = cells.get(compIndex(a.r, a.c));
                         cv.setDigit(a.oldVal);
                         if (a.cellPencilsBefore != null){
                             cv.clearPencils();
@@ -430,7 +446,6 @@ public class BoardPanel extends JPanel {
                     }
                 }
                 case TOGGLE_PENCIL -> {
-                    CellView cv = cells.get(compIndex(a.r, a.c));
                     if (a.pencilWasOn) {
                         if (!cv.hasPencil(a.digit)) cv.addPencil(a.digit);
                     } else {
