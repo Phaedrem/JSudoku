@@ -139,6 +139,9 @@ public class CellView extends JPanel{
         if (given) {
             label.setFont(label.getFont().deriveFont(Font.BOLD, 22f));
             label.setForeground(theme.textGiven());
+        } else if (isIncorrect){
+            label.setFont(label.getFont().deriveFont(Font.PLAIN, 22f));
+            label.setForeground(theme.incorrectText());
         } else {
             label.setFont(label.getFont().deriveFont(Font.PLAIN, 22f));
             label.setForeground(theme.textEditable());
