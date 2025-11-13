@@ -85,8 +85,14 @@ public class SudokuFrame extends JFrame {
         }
         filMenu.add(newMenu);
         JMenuItem saveItem = new JMenuItem("Save Game");
+        saveItem.setAccelerator(KeyStroke.getKeyStroke(
+            KeyEvent.VK_S,
+            Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         saveItem.addActionListener(e -> saveGame());
         JMenuItem loadItem = new JMenuItem("Load Game");
+        loadItem.setAccelerator(KeyStroke.getKeyStroke(
+            KeyEvent.VK_L,
+            Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx()));
         loadItem.addActionListener(e -> loadGame());
         JMenuItem exitItem = new JMenuItem("Exit");
         exitItem.addActionListener(e -> promptExit());
@@ -118,6 +124,7 @@ public class SudokuFrame extends JFrame {
         }
 
         JCheckBoxMenuItem pencilItem = new JCheckBoxMenuItem("Pencil Mode");
+        pencilItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0));
         pencilItem.setState(pencilMode);
         pencilItem.addActionListener(e -> {
             pencilMode = pencilItem.getState();
