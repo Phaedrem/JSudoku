@@ -215,7 +215,7 @@ public class CellView extends JPanel{
      * Creates and disposes a {@link java.awt.Graphics2D} context to avoid side effects.
      */
     @Override
-    protected void paintComponent(java.awt.Graphics g){
+    protected void paintComponent(Graphics g){
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g.create(); // Builds a visual overlay to prevent editting the original background color
         try {
