@@ -208,7 +208,7 @@ public class BoardPanel extends JPanel {
                     undoStack.push(new UndoAction(UndoAction.Type.TOGGLE_PENCIL, selRow, selCol, val, wasOn));
                     repaint();
                 }
-            } else {
+            } else if (!board.isGiven(selRow, selCol)){
                 int oldVal = board.get(selRow, selCol);
                 boolean ok;
                 if(val == 0){
