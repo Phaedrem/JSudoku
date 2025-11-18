@@ -53,4 +53,62 @@ public final class Generator {
         }
         return success;
     }
+
+    public static Board generateUnique(int minClues, int maxAttempts){
+        minClues = Math.max(17, Math.min(81, minClues));
+        for (int attempt = 0; attempt < maxAttempts; attempt++){
+            int[][] solved = generateSolvedGrid();
+
+            char[] values = new char[Board.SIZE*Board.SIZE];
+            char[] mask   = new char[Board.SIZE*Board.SIZE];
+            for (int i = 0; i < values.length; i++){
+                int r = i / Board.SIZE, c = i % Board.SIZE;
+                values[i] = (char)('0' + solved[r][c]);
+                mask[i]   = '1';
+            }
+
+            List<Integer> order = new ArrayList<>(values.length);
+            for (int i = 0; i < values.length; i++) order.add(i);
+            Collections.shuffle(order, RNG);
+
+            int clues = 81;
+            for (int pos : order){
+                if (clues >= minClues){
+                    char savedVal = values[pos];
+                    values[pos] = '0';
+                    mask[pos]   = '0';
+
+                    Board base = Board.fromString(new String(values), new String(mask));
+                    for (int r = 0; r < Board.SIZE; r++){
+                        for (int c = 0; c < Board.SIZE; c++){
+                            if (!base.cell(r,c).isGiven()) base.cell(r,c).setValue(0);
+                        }
+                    }
+
+                    Solver.solveBoard(base);
+                    boolean unique = (Solver.getSolvedBoardCopy() != null);
+
+                    if (unique){
+                        clues--;
+                    } else {
+                        values[pos] = savedVal;
+                        mask[pos]   = '1';
+                    }
+                }
+            }
+
+            Board finalBase = Board.fromString(new String(values), new String(mask));
+            for (int r = 0; r < Board.SIZE; r++){
+                for (int c = 0; c < Board.SIZE; c++){
+                    if (!finalBase.cell(r,c).isGiven()) finalBase.cell(r,c).setValue(0);
+                }
+            }
+            Solver.solveBoard(finalBase);
+            if (Solver.getSolvedBoardCopy() != null){
+                return Board.fromString(new String(values), new String(mask));
+            }
+        }
+        throw new IllegalStateException("Could not generate a unique puzzle in time");
+    }
+
 }

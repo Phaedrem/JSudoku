@@ -6,9 +6,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.KeyEvent;
+import java.io.*;
 
-import sudoku.Board;
-import sudoku.Solver;
+import sudoku.*;
+import util.BoardUtils;
 
 /**
  * Top-level application window for JSudoku.
@@ -83,6 +84,9 @@ public class SudokuFrame extends JFrame {
             item.addActionListener(this::startNewPuzzle);
             newMenu.add(item);
         }
+        JMenuItem rndItem = new JMenuItem("Random");
+        rndItem.addActionListener(e -> startRandomPuzzle());
+        newMenu.add(rndItem);
         filMenu.add(newMenu);
         JMenuItem saveItem = new JMenuItem("Save Game");
         saveItem.setAccelerator(KeyStroke.getKeyStroke(
@@ -115,7 +119,7 @@ public class SudokuFrame extends JFrame {
 
         JMenu settingsMenu = new JMenu("Settings");
         JMenu colors = new JMenu("Colors");
-        for (ui.ColorTheme.Preset p : ui.ColorTheme.Preset.values()){
+        for (ColorTheme.Preset p : ColorTheme.Preset.values()){
             JMenuItem item = new JMenuItem(p.displayName());
             item.addActionListener(e -> {
                 if (boardPanel != null) boardPanel.setTheme(p.theme());
@@ -165,7 +169,7 @@ public class SudokuFrame extends JFrame {
             if (!saved)  return;
         }
 
-        String seed = sudoku.Seeds.BY_NAME.get(label);
+        String seed = Seeds.BY_NAME.get(label);
         Board core = Board.fromString(seed);
         Solver.solveBoard(core);
         BoardView view = new BoardFacade(core);
@@ -219,8 +223,8 @@ public class SudokuFrame extends JFrame {
             return false;
         }
         // Output strings into file
-        java.io.File file = chooser.getSelectedFile();
-        try (java.io.PrintWriter out = new java.io.PrintWriter(file, java.nio.charset.StandardCharsets.UTF_8)) {
+        File file = chooser.getSelectedFile();
+        try (PrintWriter out = new PrintWriter(file, java.nio.charset.StandardCharsets.UTF_8)) {
             out.println("JSUDOKU v1");
             out.println(vals);
             out.println(mask);
@@ -243,9 +247,9 @@ public class SudokuFrame extends JFrame {
         chooser.setDialogTitle("Load Sudoku");
         if (chooser.showOpenDialog(this) != JFileChooser.APPROVE_OPTION) return;
 
-        java.io.File file = chooser.getSelectedFile();
-        try (java.io.BufferedReader br = new java.io.BufferedReader(
-                new java.io.InputStreamReader(new java.io.FileInputStream(file), java.nio.charset.StandardCharsets.UTF_8))) {
+        File file = chooser.getSelectedFile();
+        try (BufferedReader br = new BufferedReader(
+                new InputStreamReader(new FileInputStream(file), java.nio.charset.StandardCharsets.UTF_8))) {
 
             String header = br.readLine();
             String values  = br.readLine();
@@ -269,7 +273,7 @@ public class SudokuFrame extends JFrame {
             }
             
             Solver.solveBoard(baseForSolve);
-            ui.BoardView view = new ui.BoardFacade(core);
+            BoardView view = new BoardFacade(core);
             setBoardView(view);
             if(Solver.getSolvedBoardCopy() != null){
                 for (int r = 0; r < Board.SIZE; r++){
@@ -319,6 +323,29 @@ public class SudokuFrame extends JFrame {
         boolean saved = saveGame();
         if (saved) {
             dispose();
+        }
+    }
+
+    private void startRandomPuzzle(){
+        int minClues = 23;
+        try {
+            Board core = Generator.generateUnique(minClues, 6);
+
+            Board base = BoardUtils.copy(core);
+            for (int r = 0; r < Board.SIZE; r++){
+                for (int c = 0; c < Board.SIZE; c++){
+                    if (!base.cell(r,c).isGiven()) base.cell(r,c).setValue(0);
+                }
+            }
+            Solver.solveBoard(base);
+
+            BoardView view = new BoardFacade(core);
+            setBoardView(view);
+
+        } catch (Exception ex){
+            JOptionPane.showMessageDialog(this,
+                "Failed to generate a unique puzzle:\n" + ex.getMessage(),
+                "New Game (Random)", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
