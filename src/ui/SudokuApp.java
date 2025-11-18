@@ -13,7 +13,7 @@ import sudoku.*;
 public class SudokuApp {
     public static void main(String[] args){
         SwingUtilities.invokeLater(() -> {
-            Board start = Board.fromString(Seeds.EASY);
+            Board start = Generator.generateUnique(SudokuFrame.EASY, SudokuFrame.MAXATTEMPTS);
             Solver.solveBoard(start);
             BoardFacade view = new BoardFacade(start);
             SudokuFrame frame = new SudokuFrame(view);
