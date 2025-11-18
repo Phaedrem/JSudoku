@@ -18,6 +18,12 @@ import util.BoardUtils;
  * and Settings → Colors), and the logic to swap in a new puzzle or persist/load a game.
  */
 public class SudokuFrame extends JFrame {
+    public static final int MAXATTEMPTS = 6;
+    public static final int EASY = 38;
+    private final int MEDIUM = 35;
+    private final int HARD = 31;
+    private final int EXPERT = 28;
+    private final int EXTREME = 23;
     private BoardPanel boardPanel;
     private boolean pencilMode = false;
 
@@ -78,15 +84,12 @@ public class SudokuFrame extends JFrame {
         JMenuBar bar = new JMenuBar();
         JMenu filMenu = new JMenu("File");
         JMenu newMenu = new JMenu("New Game");
-        String[] diffs = {"Easy", "Medium", "Hard", "Multi", "Impossible"};
+        String[] diffs = {"Easy", "Medium", "Hard", "Expert", "Extreme"};
         for (String d : diffs){
             JMenuItem item = new JMenuItem(d);
             item.addActionListener(this::startNewPuzzle);
             newMenu.add(item);
         }
-        JMenuItem rndItem = new JMenuItem("Random");
-        rndItem.addActionListener(e -> startRandomPuzzle());
-        newMenu.add(rndItem);
         filMenu.add(newMenu);
         JMenuItem saveItem = new JMenuItem("Save Game");
         saveItem.setAccelerator(KeyStroke.getKeyStroke(
@@ -151,6 +154,7 @@ public class SudokuFrame extends JFrame {
      */
     private void startNewPuzzle(ActionEvent e){
         String label = ((JMenuItem) e.getSource()).getText().toLowerCase();
+        int difficulty = EASY;
 
         Object[] options = {"Save", "Don't Save", "Cancel"};
         int choice = JOptionPane.showOptionDialog(
@@ -169,11 +173,17 @@ public class SudokuFrame extends JFrame {
             if (!saved)  return;
         }
 
-        String seed = Seeds.BY_NAME.get(label);
-        Board core = Board.fromString(seed);
-        Solver.solveBoard(core);
-        BoardView view = new BoardFacade(core);
-        setBoardView(view);
+        if ("medium".equals(label)){
+            difficulty = MEDIUM;
+        }else if ("hard".equals(label)){
+            difficulty = HARD;
+        }else if ("expert".equals(label)){
+            difficulty = EXPERT;
+        }else if ("extreme".equals(label)){
+            difficulty = EXTREME;
+        }
+        startRandomPuzzle(difficulty, MAXATTEMPTS);
+
     }
 
     /**
@@ -326,10 +336,9 @@ public class SudokuFrame extends JFrame {
         }
     }
 
-    private void startRandomPuzzle(){
-        int minClues = 23;
+    private void startRandomPuzzle(int difficulty, int MaxAtt){
         try {
-            Board core = Generator.generateUnique(minClues, 6);
+            Board core = Generator.generateUnique(difficulty, MaxAtt);
 
             Board base = BoardUtils.copy(core);
             for (int r = 0; r < Board.SIZE; r++){
