@@ -73,7 +73,7 @@ public final class Generator {
 
             int clues = 81;
             for (int pos : order){
-                if (clues >= minClues){
+                if (clues > minClues){
                     char savedVal = values[pos];
                     values[pos] = '0';
                     mask[pos]   = '0';
