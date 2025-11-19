@@ -129,7 +129,7 @@ public class SudokuFrame extends JFrame {
             });
             colors.add(item);
         }
-
+        settingsMenu.add(colors);
         JCheckBoxMenuItem pencilItem = new JCheckBoxMenuItem("Pencil Mode");
         pencilItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0));
         pencilItem.setState(pencilMode);
@@ -137,11 +137,13 @@ public class SudokuFrame extends JFrame {
             pencilMode = pencilItem.getState();
             if (boardPanel != null) boardPanel.setPencilMode(pencilMode);
         });
-        settingsMenu.add(colors);
+        JMenuItem hintItem = new JMenuItem("Hint");
+        hintItem.addActionListener(e -> boardPanel.giveHint());
         bar.add(filMenu);
         bar.add(editMenu);
         bar.add(settingsMenu);
         bar.add(pencilItem);
+        bar.add(hintItem);
 
         return bar;
     }

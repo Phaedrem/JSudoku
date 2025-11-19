@@ -7,8 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Deque;
 import java.util.ArrayDeque;
+import java.util.Random;
 
 import sudoku.Board;
+import sudoku.Solver;
 
 /**
  * Main board component that lays out a SIZE×SIZE grid of {@link CellView}s,
@@ -460,5 +462,36 @@ public class BoardPanel extends JPanel {
 
     public void setIncorrectAt(int r, int c, boolean incorrect){
         cells.get(compIndex(r, c)).setIncorrect(incorrect);
+    }
+
+    public void giveHint(){
+        if (Solver.getSolvedBoardCopy() != null){
+            List<int[]> candidates = new ArrayList<>();
+            for (int r = 0; r < Board.SIZE; r++){
+                for (int c = 0; c < Board.SIZE; c++){
+                    if(!board.isGiven(r, c)){
+                        int curr = board.get(r, c);
+                        int sol = Solver.solvedValueAt(r, c);
+                        if (curr == 0 || curr != sol){
+                            candidates.add(new int[]{r,c});
+                        }
+                    }
+                }
+            }
+
+            if(!candidates.isEmpty()){
+                int[] pick = candidates.get(new Random().nextInt(candidates.size()));
+                int r = pick[0], c = pick[1];
+                int hint = Solver.solvedValueAt(r, c);
+                setSelectedCell(r, c);
+                if(pencilMode){
+                    pencilMode = false;
+                    placeDigit(hint);
+                    pencilMode = true;
+                } else {
+                    placeDigit(hint);
+                }   
+            }
+        }
     }
 }
