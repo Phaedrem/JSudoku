@@ -268,6 +268,15 @@ public class CellView extends JPanel{
         }
     }
 
+    /**
+     * Updates whether this cell is currently marked incorrect and refreshes its colors.
+     * <p>
+     * When incorrect, the label text color is switched to the theme's
+     * {@link ColorTheme#incorrectText()} value; otherwise the normal editable text
+     * color is used.
+     *
+     * @param incorrect {@code true} to mark this cell as incorrect; {@code false} to clear
+     */
     public void setIncorrect(boolean incorrect){
         this.isIncorrect = incorrect;
         if(!this.isIncorrect){

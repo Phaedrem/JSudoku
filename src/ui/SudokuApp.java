@@ -6,9 +6,10 @@ import sudoku.*;
 /**
  * Application entry point for JSudoku.
  * <p>
- * Initializes a starting board from a seed, wraps it in a {@code BoardFacade}
- * (to expose a read/write {@code BoardView}), creates the main {@link ui.SudokuFrame},
- * and shows the UI.
+ * Generates a new puzzle at the default difficulty using
+ * {@link sudoku.Generator#generateUnique(int, int)}, solves it once to cache
+ * the solution in {@link sudoku.Solver}, wraps the board in a {@link BoardFacade},
+ * and shows the main {@link ui.SudokuFrame}.
  */
 public class SudokuApp {
     public static void main(String[] args){

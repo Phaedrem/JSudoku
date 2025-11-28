@@ -43,6 +43,19 @@ public class Board {
         }
     }
 
+    /**
+     * Internal constructor that builds a board from explicit value and given masks.
+     * <p>
+     * The two arrays must both be {@code SIZE × SIZE}. Non-zero entries in
+     * {@code start} become cell values; the corresponding entry in {@code givens}
+     * controls whether that cell is marked as an immutable given.
+     *
+     * @param start  initial digit values for each cell, with {@code 0} meaning empty
+     * @param givens parallel boolean grid indicating which cells are givens
+     * @throws NullPointerException     if {@code start} is {@code null}
+     * @throws IllegalArgumentException if the dimensions of {@code start} or any row
+     *                                  are not {@code SIZE}, or if the grids are inconsistent
+     */
     private Board(int[][] start, boolean[][] givens) {
         if (start == null) throw new NullPointerException("Passed 2D array is null");
         if (start.length != SIZE) throw new IllegalArgumentException("Passed array must have " + SIZE + " rows");
@@ -212,6 +225,21 @@ public class Board {
         return new Board(arr);
     }
 
+     /**
+     * Creates a board from a pair of strings: one for values and one
+     * for which cells are givens.
+     * <p>
+     * Both strings must have length {@code SIZE * SIZE}. Characters in
+     * {@code values} must be digits {@code '1'..'9'} or {@code '0'}/{@code '.'}
+     * for empty. Characters in {@code mask} must be {@code '1'} for a given or
+     * {@code '0'} for a non-given cell.
+     *
+     * @param values cell values encoded as characters
+     * @param mask   mask values indicate which cells are given
+     * @return a new {@link Board} with the specified starting state
+     * @throws NullPointerException     if {@code values} or {@code mask} is {@code null}
+     * @throws IllegalArgumentException if the string lengths or contents are invalid
+     */
     public static Board fromString(String values, String mask) {
         if (values == null || mask == null)
             throw new NullPointerException("values/mask");

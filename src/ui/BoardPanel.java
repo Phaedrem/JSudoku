@@ -105,6 +105,171 @@ public class BoardPanel extends JPanel {
         }
     }
 
+    /**
+     * Returns the view model currently displayed by this panel.
+     * @return the {@link ui.BoardView}
+     */
+    public BoardView getView(){
+        return this.board;
+    }
+
+    /**
+     * Changes the active {@link ui.ColorTheme} and reapplies it to all cells
+     * (background, given/editable text colors, grid lines), then repaints.
+     * @param t the theme to apply
+     */
+    public void setTheme(ColorTheme t){
+        this.theme = t;
+        for (CellView cv : cells){
+            cv.setTheme(t);
+            cv.setBackground(t.cellBackground());
+            cv.setGiven(board.isGiven(cv.row(), cv.col()));
+        }
+        repaint();
+    }
+
+    /**
+     * Enables/disables pencil input mode.
+     * When enabled, digit keys toggle pencil marks for the selected empty cell.
+     * @param on true to enable pencil mode; false to disable
+     */
+    public void setPencilMode(boolean on){
+        this.pencilMode = on;
+        repaint();
+    }
+
+    /**
+     * Programmatically selects a cell and updates highlight overlays.
+     * Requests focus for keyboard input.
+     * @param r row index
+     * @param c column index
+     */
+    public void setSelectedCell(int r, int c){ 
+        if (selRow >= 0){
+            cells.get(compIndex(selRow, selCol)).setSelected(false); // Clear old highlight
+        }
+        selRow = r;
+        selCol = c;
+        updateHighlights();
+        requestFocusInWindow();
+    }
+
+    /**
+     * Reverts the most recent player action recorded on the undo stack.
+     * <p>
+     * For a final number placement, this method clears the number, restores the cell's
+     * prior pencil marks, and re-adds any peer pencil marks that were automatically removed.
+     * For a pencil toggle, the specific mark is restored to its previous state.
+     * <p>
+     * If no actions are available to undo, this method does nothing.
+     */
+    public void undoLast(){
+        if (!undoStack.isEmpty()){
+            UndoAction a = undoStack.pop();
+            CellView cv = cells.get(compIndex(a.r, a.c));
+            switch (a.type){
+                case PLACE_VALUE -> {
+                    boolean ok;
+                    if (a.oldVal == 0){
+                        ok = board.tryClear(a.r, a.c);
+                    } else {
+                        ok = board.solutionAt(a.r, a.c) == a.oldVal;
+                        cv.setIncorrect(false);
+                        if(!ok){
+                            board.setUnsafe(a.r, a.c, a.oldVal);
+                            ok = true;
+                            cv.setIncorrect(true);
+                        } else {
+                            board.trySet(a.r, a.c, a.oldVal);
+                        }
+                    }
+                    if (ok) {
+                        cv.setDigit(a.oldVal);
+                        if (a.cellPencilsBefore != null){
+                            cv.clearPencils();
+                            for (int d=1; d <= Board.SIZE; d++){
+                                if (a.cellPencilsBefore[d-1]) cv.addPencil(d);
+                            }
+                        }
+                        if (a.peerPencilsRemoved != null){
+                            for (PencilRestore pr : a.peerPencilsRemoved){
+                                if (board.get(pr.r, pr.c) == 0) {
+                                    cells.get(compIndex(pr.r, pr.c)).addPencil(pr.digit);
+                                }
+                            }
+                        }
+                    }
+                }
+                case TOGGLE_PENCIL -> {
+                    if (a.pencilWasOn) {
+                        if (!cv.hasPencil(a.digit)) cv.addPencil(a.digit);
+                    } else {
+                        if (cv.hasPencil(a.digit)) cv.removePencil(a.digit);
+                    }
+                }
+            }
+        }
+        updateHighlights();
+        repaint();
+    }
+
+    /**
+     * Marks a specific cell as incorrect for rendering purposes.
+     * <p>
+     * This delegates to the underlying {@link CellView} so that the cell can
+     * draw itself using the "incorrect" highlight (for example, red text).
+     *
+     * @param r          row index
+     * @param c          column index
+     * @param incorrect  {@code true} to flag the cell as incorrect; {@code false} to clear the flag
+     */
+    public void setIncorrectAt(int r, int c, boolean incorrect){
+        cells.get(compIndex(r, c)).setIncorrect(incorrect);
+    }
+
+    /**
+     * Reveals a hint to the player by filling one candidate cell with its solved value.
+     * <p>
+     * This method:
+     * <ul>
+     *   <li>Requires that {@link sudoku.Solver} has a solved board cached.</li>
+     *   <li>Builds a list of cells that are either empty or contain an incorrect value.</li>
+     *   <li>Picks one at random and fills it with the correct digit.</li>
+     *   <li>Temporarily disables pencil mode while inserting the final value.</li>
+     * </ul>
+     * The chosen cell is also selected in the UI.
+     */
+    public void giveHint(){
+        if (Solver.getSolvedBoardCopy() != null){
+            List<int[]> candidates = new ArrayList<>();
+            for (int r = 0; r < Board.SIZE; r++){
+                for (int c = 0; c < Board.SIZE; c++){
+                    if(!board.isGiven(r, c)){
+                        int curr = board.get(r, c);
+                        int sol = Solver.solvedValueAt(r, c);
+                        if (curr == 0 || curr != sol){
+                            candidates.add(new int[]{r,c});
+                        }
+                    }
+                }
+            }
+
+            if(!candidates.isEmpty()){
+                int[] pick = candidates.get(new Random().nextInt(candidates.size()));
+                int r = pick[0], c = pick[1];
+                int hint = Solver.solvedValueAt(r, c);
+                setSelectedCell(r, c);
+                if(pencilMode){
+                    pencilMode = false;
+                    placeDigit(hint);
+                    pencilMode = true;
+                } else {
+                    placeDigit(hint);
+                }   
+            }
+        }
+    }
+
     /** Converts (row, col) to the linear index into {@code cells}. */
     private int compIndex(int r, int c) { return r * Board.SIZE + c; }
 
@@ -290,55 +455,6 @@ public class BoardPanel extends JPanel {
         setSelectedCell(0,0);
     }
 
-     /**
-     * Returns the view model currently displayed by this panel.
-     * @return the {@link ui.BoardView}
-     */
-    public BoardView getView(){
-        return this.board;
-    }
-
-    /**
-     * Changes the active {@link ui.ColorTheme} and reapplies it to all cells
-     * (background, given/editable text colors, grid lines), then repaints.
-     * @param t the theme to apply
-     */
-    public void setTheme(ColorTheme t){
-        this.theme = t;
-        for (CellView cv : cells){
-            cv.setTheme(t);
-            cv.setBackground(t.cellBackground());
-            cv.setGiven(board.isGiven(cv.row(), cv.col()));
-        }
-        repaint();
-    }
-
-    /**
-     * Enables/disables pencil input mode.
-     * When enabled, digit keys toggle pencil marks for the selected empty cell.
-     * @param on true to enable pencil mode; false to disable
-     */
-    public void setPencilMode(boolean on){
-        this.pencilMode = on;
-        repaint();
-    }
-
-    /**
-     * Programmatically selects a cell and updates highlight overlays.
-     * Requests focus for keyboard input.
-     * @param r row index
-     * @param c column index
-     */
-    public void setSelectedCell(int r, int c){ 
-        if (selRow >= 0){
-            cells.get(compIndex(selRow, selCol)).setSelected(false); // Clear old highlight
-        }
-        selRow = r;
-        selCol = c;
-        updateHighlights();
-        requestFocusInWindow();
-    }
-
     /**
      * Stack of reversible player actions.
      * <p>
@@ -401,97 +517,5 @@ public class BoardPanel extends JPanel {
         return removed;
     }
 
-    /**
-     * Reverts the most recent player action recorded on the undo stack.
-     * <p>
-     * For a final number placement, this method clears the number, restores the cell's
-     * prior pencil marks, and re-adds any peer pencil marks that were automatically removed.
-     * For a pencil toggle, the specific mark is restored to its previous state.
-     * <p>
-     * If no actions are available to undo, this method does nothing.
-     */
-    public void undoLast(){
-        if (!undoStack.isEmpty()){
-            UndoAction a = undoStack.pop();
-            CellView cv = cells.get(compIndex(a.r, a.c));
-            switch (a.type){
-                case PLACE_VALUE -> {
-                    boolean ok;
-                    if (a.oldVal == 0){
-                        ok = board.tryClear(a.r, a.c);
-                    } else {
-                        ok = board.solutionAt(a.r, a.c) == a.oldVal;
-                        cv.setIncorrect(false);
-                        if(!ok){
-                            board.setUnsafe(a.r, a.c, a.oldVal);
-                            ok = true;
-                            cv.setIncorrect(true);
-                        } else {
-                            board.trySet(a.r, a.c, a.oldVal);
-                        }
-                    }
-                    if (ok) {
-                        cv.setDigit(a.oldVal);
-                        if (a.cellPencilsBefore != null){
-                            cv.clearPencils();
-                            for (int d=1; d <= Board.SIZE; d++){
-                                if (a.cellPencilsBefore[d-1]) cv.addPencil(d);
-                            }
-                        }
-                        if (a.peerPencilsRemoved != null){
-                            for (PencilRestore pr : a.peerPencilsRemoved){
-                                if (board.get(pr.r, pr.c) == 0) {
-                                    cells.get(compIndex(pr.r, pr.c)).addPencil(pr.digit);
-                                }
-                            }
-                        }
-                    }
-                }
-                case TOGGLE_PENCIL -> {
-                    if (a.pencilWasOn) {
-                        if (!cv.hasPencil(a.digit)) cv.addPencil(a.digit);
-                    } else {
-                        if (cv.hasPencil(a.digit)) cv.removePencil(a.digit);
-                    }
-                }
-            }
-        }
-        updateHighlights();
-        repaint();
-    }
-
-    public void setIncorrectAt(int r, int c, boolean incorrect){
-        cells.get(compIndex(r, c)).setIncorrect(incorrect);
-    }
-
-    public void giveHint(){
-        if (Solver.getSolvedBoardCopy() != null){
-            List<int[]> candidates = new ArrayList<>();
-            for (int r = 0; r < Board.SIZE; r++){
-                for (int c = 0; c < Board.SIZE; c++){
-                    if(!board.isGiven(r, c)){
-                        int curr = board.get(r, c);
-                        int sol = Solver.solvedValueAt(r, c);
-                        if (curr == 0 || curr != sol){
-                            candidates.add(new int[]{r,c});
-                        }
-                    }
-                }
-            }
-
-            if(!candidates.isEmpty()){
-                int[] pick = candidates.get(new Random().nextInt(candidates.size()));
-                int r = pick[0], c = pick[1];
-                int hint = Solver.solvedValueAt(r, c);
-                setSelectedCell(r, c);
-                if(pencilMode){
-                    pencilMode = false;
-                    placeDigit(hint);
-                    pencilMode = true;
-                } else {
-                    placeDigit(hint);
-                }   
-            }
-        }
-    }
+    
 }

@@ -74,6 +74,15 @@ public class BoardFacade implements BoardView {
         return board.isSolved();
     }
 
+    /**
+     * Attempts to clear a cell at the given coordinates.
+     * <p>
+     * The operation fails if the cell is a given (immutable) clue.
+     *
+     * @param r row index
+     * @param c column index
+     * @return {@code true} if the cell was cleared; {@code false} if it was a given
+     */
     @Override
     public boolean tryClear(int r, int c){
         return board.tryClear(r, c);
@@ -84,11 +93,32 @@ public class BoardFacade implements BoardView {
         return Solver.getSolvedBoardCopy() != null && Solver.getNumSolutions() == 1;
     }
 
+    /**
+     * Returns the solved digit for the given cell from the {@link sudoku.Solver}.
+     * <p>
+     * This assumes the solver has already been run on a compatible board and that
+     * the solved state is still cached.
+     *
+     * @param r row index
+     * @param c column index
+     * @return the solved digit for {@code (r, c)}
+     */
     @Override
     public int solutionAt(int r, int c){
         return Solver.solvedValueAt(r,c);
     }
 
+    /**
+     * Sets a digit in the given cell without any legality checks.
+     * <p>
+     * This method respects givens (it will not overwrite them) but does not verify
+     * row/column/box constraints. Intended for UI features such as hinting or
+     * showing incorrect entries.
+     *
+     * @param r   row index
+     * @param c   column index
+     * @param val digit to store
+     */
     @Override
     public void setUnsafe(int r, int c, int val){
         var cell = board.cell(r, c);

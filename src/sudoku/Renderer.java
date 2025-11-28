@@ -1,6 +1,11 @@
 package sudoku;
 
 /**
+ * Legacy CLI support class used for Phase 1 (terminal version) of the project.
+ * The final integrated GUI uses {@link ui.SudokuApp} as its entry point.
+ */
+
+/**
  * Console renderer for printing a Sudoku board.
  * Produces a simple ASCII representation of the current grid.
  */

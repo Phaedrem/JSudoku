@@ -16,12 +16,12 @@ public class BoardUtils {
      * @return an independent board with the same cell values
      */
     public static Board copy(Board src) {
-    int[][] grid = new int[Board.SIZE][Board.SIZE];
-    for (int r = 0; r < Board.SIZE; r++) {
-        for (int c = 0; c < Board.SIZE; c++) {
-            grid[r][c] = src.cell(r, c).getValue();
+        int[][] grid = new int[Board.SIZE][Board.SIZE];
+        for (int r = 0; r < Board.SIZE; r++) {
+            for (int c = 0; c < Board.SIZE; c++) {
+                grid[r][c] = src.cell(r, c).getValue();
+            }
         }
-    }
-    return new Board(grid);
+        return new Board(grid);
     }
 }

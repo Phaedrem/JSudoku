@@ -338,6 +338,22 @@ public class SudokuFrame extends JFrame {
         }
     }
 
+    /**
+     * Generates and displays a new random puzzle at the given difficulty.
+     * <p>
+     * This method:
+     * <ul>
+     *   <li>Uses {@link sudoku.Generator#generateUnique(int, int)} to create a puzzle.</li>
+     *   <li>Builds a copy of the puzzle with non-given cells cleared, then solves
+     *       that board via {@link sudoku.Solver} to cache the solution.</li>
+     *   <li>Wraps the generated puzzle in a {@link BoardFacade} and replaces
+     *       the current {@link BoardPanel} with one displaying the new view.</li>
+     *   <li>Shows an error dialog if generation fails.</li>
+     * </ul>
+     *
+     * @param difficulty number of givens to request (used by the generator)
+     * @param MaxAtt     maximum number of attempts when generating the puzzle
+     */
     private void startRandomPuzzle(int difficulty, int MaxAtt){
         try {
             Board core = Generator.generateUnique(difficulty, MaxAtt);
