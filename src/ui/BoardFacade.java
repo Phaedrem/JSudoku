@@ -88,6 +88,16 @@ public class BoardFacade implements BoardView {
         return board.tryClear(r, c);
     }
 
+    /**
+     * Determines whether the current puzzle has exactly one valid solution.
+     * <p>
+     * This method queries the {@link sudoku.Solver} to check whether a solved
+     * board has been computed and that the number of identified solutions is
+     * exactly one. It performs no solving itself.
+     *
+     * @return {@code true} if a solved board exists and the solver reports
+     *         exactly one solution; {@code false} otherwise
+     */
     @Override
     public boolean hasUniqueSolution(){
         return Solver.getSolvedBoardCopy() != null && Solver.getNumSolutions() == 1;
