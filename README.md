@@ -1,32 +1,84 @@
-Sudoku Game (Java OOP Project)  
-Overview  
 
-This project implements a fully functional Sudoku puzzle game in Java using object-oriented design principles.  
-It replaces the original chess assignment but follows the same structural and grading expectations, including modular class design, encapsulation, documentation, and command-line interaction.  
+# GUI Sudoku Project
 
-Players can load puzzles, edit cells, check solutions, and auto-solve puzzles using a recursive backtracking solver with a built-in search limit to prevent runaway recursion.  
+## Team Information
+- **Team Name**: Pencil Pusher
+- **Team Members**: 
+  - Darren Bowers
+- **Semester**: Fall 2025
+- **Course Number and Section**: CS3354 - Section R01
 
-**Features**  
-- 9x9 Sudoku board managed by the Board class
-- Cell objects representing each square’s value and "given" status
-- Multiple puzzle seeds: easy, medium, hard, multi, and impossible
-- Safe editing: prevents modification of given cells or illegal placements
-- Validation for row, column, and 3x3 box conflicts
-- Recursive backtracking solver (Solver) with SEARCH_LIMIT guard
-- Console-based user interface (SudokuGame) with error handling and confirmation prompts
+---
 
-**How to Compile and Run:**  
-From the project root directory:  
-javac -d out src/sudoku/\*.java src/util/\*.java  
-java -cp out sudoku.SudokuGame
+## Project Overview
+This project is a GUI-based Sudoku game developed as part of our Object-Oriented Programming course. It combines backend logic from our console-based Phase 1 implementation with a graphical interface built in Phase 2, creating a complete chess game experience with full gameplay functionality.
 
-**Commands Reference:**  
-help - Displays available commands  
-print - Prints the current Sudoku board  
-set r c v - Sets a value (1–9) at row r, column c (example: set 3 4 9)  
-clear r c - Clears a non-given cell (example: clear 5 6)  
-load name - Loads a puzzle by name (easy, medium, hard, multi, impossible)  
-load <string> - Loads from an 81-character string representation  
-check - Checks whether the puzzle is solved  
-solve - Automatically solves the current puzzle  
-quit - Exits the program  
+---
+
+## Preview
+### GUI Preview
+![Sudoku GUI Preview](images/gui-preview.png)
+
+### Class Diagram
+![Class Diagram](path/to/your/class_diagram_image.png)//////////////////////////////////////////////////////////////////////////////////////////
+
+---
+
+## How to Run the Project
+Follow these instructions to compile and run the project:
+
+1. **Clone the Repository**:  
+   ```bash
+   git clone [repository link]
+   cd [repository folder]
+   ```
+
+2. **Compile the Code**:  
+   ```bash
+    javac */*.java
+   ```
+
+3. **Run the Game**:  
+    Option A — Run Final GUI Version (Phase 3)
+
+   ```bash
+   java ui.SudokuApp
+   ```
+
+   Option B — Run CLI Version (Phase 1)
+   ```bash
+    javac sudoku/*.java
+    java sudoku.SudokuGame
+   ```
+   
+
+
+---
+
+## Features Checklist
+- [x] GUI with an 9x9 Sudoku Board
+- [x] Valid puzzle generation with guaranteed unique solution
+- [x] Digit validation based on Sudok rules
+- [x] GUI interaction with cell selection & digit entry
+- [x] Solved puzzle mechanism
+- [x] Pencil mode for candidate notes
+- [x] Red highlighting for incorrect digits
+- [x] Undo support
+- [x] New game generator button
+- [x] Hint button autofills a correct cell
+- [x] Save and load game features
+- [x] Three coloring schemes
+
+---
+
+## Additional Information
+For details on Phases 1 and 2, please refer to the [branches/folders] designated for those implementations. Detailed documentation for those phases is not included in this README.
+
+---
+
+## Acknowledgements
+Special thanks to Dr. Xiaomin Li and peers for guidance and testing.
+
+## License
+
+This project was created for academic purposes and is not licensed for commercial distribution.
