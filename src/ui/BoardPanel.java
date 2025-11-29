@@ -23,6 +23,7 @@ public class BoardPanel extends JPanel {
     private int selRow = -1, selCol = -1;
     private ColorTheme theme = ColorTheme.Preset.CLASSIC.theme();
     private boolean pencilMode = false;
+    private final Deque<UndoAction> undoStack = new ArrayDeque<>();
 
      /**
      * Stores a single peer pencil mark that was removed as a result of placing a final value.
@@ -453,16 +454,7 @@ public class BoardPanel extends JPanel {
             }
         }
         setSelectedCell(0,0);
-    }
-
-    /**
-     * Stack of reversible player actions.
-     * <p>
-     * Each element is an {@link UndoAction} describing either a final number placement
-     * or a pencil toggle. The most recent action is popped when performing an undo,
-     * allowing multiple sequential undos.
-     */
-    private final Deque<UndoAction> undoStack = new ArrayDeque<>();
+    } 
 
     /**
      * Creates a snapshot of all pencil marks currently visible in a cell.
