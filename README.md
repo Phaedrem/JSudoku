@@ -20,7 +20,7 @@ This project is a GUI-based Sudoku game developed as part of our Object-Oriented
 ![Sudoku GUI Preview](images/gui-preview.png)
 
 ### Class Diagram
-![Class Diagram](path/to/your/class_diagram_image.png)//////////////////////////////////////////////////////////////////////////////////////////
+![Class Diagram](images/Class_Diagram.png)
 
 ---
 
