@@ -98,7 +98,7 @@ public class BoardPanel extends JPanel {
                 cell.setTheme(theme);
                 cell.setBackground(theme.cellBackground());
                 cell.setDigit(board.get(r, c));
-                cell.setGiven(board.isGiven(r, c));
+                cell.setGivenHighlight(board.isGiven(r, c));
                 cells.add(cell);
                 add(cell);
                 setupKeyBindings();
@@ -124,7 +124,7 @@ public class BoardPanel extends JPanel {
         for (CellView cv : cells){
             cv.setTheme(t);
             cv.setBackground(t.cellBackground());
-            cv.setGiven(board.isGiven(cv.row(), cv.col()));
+            cv.setGivenHighlight(board.isGiven(cv.row(), cv.col()));
         }
         repaint();
     }

@@ -135,7 +135,7 @@ public class CellView extends JPanel{
      * with {@link ColorTheme#textEditable()}.
      * @param given whether this cell is a fixed clue
      */
-    public void setGiven(boolean given){
+    public void setGivenHighlight(boolean given){
         if (given) {
             label.setFont(label.getFont().deriveFont(Font.BOLD, 22f));
             label.setForeground(theme.textGiven());
