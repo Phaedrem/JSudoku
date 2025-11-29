@@ -5,6 +5,22 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Utility class responsible for creating valid Sudoku puzzles.
+ * <p>
+ * A puzzle is generated in two main steps:
+ * <ol>
+ *   <li>First, a completely solved Board.SIZE×Board.SIZE grid is produced using a randomized
+ *       backtracking algorithm.</li>
+ *   <li>Then, values are selectively removed while checking with
+ *       {@link sudoku.Solver} to ensure that the resulting puzzle still has
+ *       a <strong>unique solution</strong>.</li>
+ * </ol>
+ * The amount of starting clues and the number of regeneration attempts can
+ * be controlled through method parameters.
+ * <p>
+ * All methods are static since the generator maintains no state.
+ */
 public final class Generator {
     private static final Random RNG = new Random();
 
