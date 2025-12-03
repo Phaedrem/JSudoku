@@ -26,6 +26,7 @@ public class SudokuFrame extends JFrame {
     private final int EXTREME = 23;
     private BoardPanel boardPanel;
     private boolean pencilMode = false;
+    private JCheckBoxMenuItem pencilItem;
 
     /**
      * Creates a frame showing the given Sudoku board.
@@ -130,7 +131,7 @@ public class SudokuFrame extends JFrame {
             colors.add(item);
         }
         settingsMenu.add(colors);
-        JCheckBoxMenuItem pencilItem = new JCheckBoxMenuItem("Pencil Mode");
+        pencilItem = new JCheckBoxMenuItem("Pencil Mode");
         pencilItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, 0));
         pencilItem.setState(pencilMode);
         pencilItem.addActionListener(e -> {
@@ -368,6 +369,9 @@ public class SudokuFrame extends JFrame {
 
             BoardView view = new BoardFacade(core);
             setBoardView(view);
+            if (pencilItem != null){
+                pencilItem.setSelected(false);
+            }
 
         } catch (Exception ex){
             JOptionPane.showMessageDialog(this,
