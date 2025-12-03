@@ -50,7 +50,7 @@ public record ColorTheme(
             new Color(210,215,220),
             new Color(140,190,255),
             new Color(229,92,108),
-            new Color(50,90,175),
+            new Color(90,169,230),
             new Color(70,75,90),
             new Color(50,55,70),
             new Color(100,150,255),
